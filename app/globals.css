@@ -306,7 +306,7 @@ button {
 
 .metric-grid--dashboard {
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: 0;
+  margin-top: 22px;
 }
 
 .metric-card,
@@ -529,6 +529,7 @@ button {
   overflow: hidden;
   padding: 18px;
   position: relative;
+  z-index: 1; 
 }
 
 .event-card__media {
@@ -555,7 +556,7 @@ button {
 
 .event-card__headline {
   align-items: flex-end;
-  margin-top: 88px;
+  margin-top: 120px;
 }
 
 .event-card__headline p {
@@ -1043,12 +1044,11 @@ button {
   align-items: flex-end;
   background-position: center;
   background-size: cover;
-  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   display: flex;
   min-height: 420px;
   overflow: hidden;
-  box-shadow: var(--shadow);
+  padding: 0;
   position: relative;
 }
 
@@ -1057,6 +1057,10 @@ button {
   padding: 26px;
   position: relative;
   z-index: 1;
+}
+
+.detail-banner__content .status-badge {
+  margin-bottom: 12px;
 }
 
 .detail-banner__content p {
@@ -1613,6 +1617,10 @@ button {
   z-index: 1;
 }
 
+.event-card__poster-copy {
+  margin-top: 918px;
+}
+
 .event-card__poster-top {
   align-items: center;
   display: flex;
@@ -1786,6 +1794,17 @@ button {
 
   .market-toolbar__chips {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .market-page .event-card__poster {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+  }
+
+  .event-grid--compact .event-card__media {
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    min-height: 0;
   }
 }
 
