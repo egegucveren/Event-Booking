@@ -24,11 +24,14 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   }
 
   const attendeeCanBook = user?.role === "attendee" && event.status === "scheduled" && event.remainingSeats > 0;
+  const detailBannerStyle = {
+    backgroundImage: `linear-gradient(90deg, rgba(7, 18, 30, 0.78) 0%, rgba(7, 18, 30, 0.58) 42%, rgba(7, 18, 30, 0.22) 100%), url(${event.imagePath})`
+  };
 
   return (
     <section className="detail-layout">
       <div className="detail-hero">
-        <div className="detail-banner" data-category={event.category.toLowerCase()}>
+        <div className="detail-banner" data-category={event.category.toLowerCase()} style={detailBannerStyle}>
           <div className="detail-banner__overlay" />
           <div className="detail-banner__content">
             <StatusBadge label={event.category} />

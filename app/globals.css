@@ -1035,15 +1035,20 @@ button {
 
 .detail-banner {
   align-items: flex-end;
+  background-position: center;
+  background-size: cover;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   display: flex;
-  min-height: 340px;
+  min-height: 420px;
+  overflow: hidden;
   box-shadow: var(--shadow);
+  position: relative;
 }
 
 .detail-banner__content {
   max-width: 680px;
+  padding: 26px;
   position: relative;
   z-index: 1;
 }
@@ -1820,5 +1825,13 @@ button {
 
   .event-card__poster-date {
     margin-top: 28px;
+  }
+
+  .detail-banner {
+    min-height: auto;
+  }
+
+  .detail-banner__content {
+    padding: 20px;
   }
 }
