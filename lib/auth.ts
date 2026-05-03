@@ -1,0 +1,155 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { createHash, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
+import { promisify } from "node:util";
+
+import { execute, query } from "@/lib/db";
+import type { Role, SessionUser } from "@/lib/types";
+
+const scryptAsync = promisify(scrypt);
+const SESSION_COOKIE = "pulsepass_session";
+const SESSION_DAYS = 7;
+
+type UserRow = {
+  id: number;
+  name: string;
+  email: string;
+  role: Role;
+  password_hash: string;
+};
+
+export async function hashPassword(password: string) {
+  const salt = randomBytes(16).toString("hex");
+  const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${salt}:${derivedKey.toString("hex")}`;
+}
+
+export async function verifyPassword(password: string, storedHash: string) {
+  const [salt, savedKey] = storedHash.split(":");
+  if (!salt || !savedKey) {
+    return false;
+  }
+
+  const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
+  const savedBuffer = Buffer.from(savedKey, "hex");
+
+  if (savedBuffer.length !== derivedKey.length) {
+    return false;
+  }
+
+  return timingSafeEqual(savedBuffer, derivedKey);
+}
+
+export function hashSessionToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+export async function createSession(user: SessionUser) {
+  const token = randomBytes(32).toString("hex");
+  const tokenHash = hashSessionToken(token);
+  const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
+
+  await execute("INSERT INTO sessions (user_id, token_hash, expires_at) VALUES (?, ?, ?)", [
+    user.id,
+    tokenHash,
+    `${expiresAt.toISOString().slice(0, 19).replace("T", " ")}`
+  ]);
+
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    expires: expiresAt,
+    path: "/"
+  });
+}
+
+export async function destroySession() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+
+  if (token) {
+    await execute("DELETE FROM sessions WHERE token_hash = ?", [hashSessionToken(token)]);
+  }
+
+  cookieStore.delete(SESSION_COOKIE);
+}
+
+export async function getSessionUser() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+
+  if (!token) {
+    return null;
+  }
+
+  const rows = await query<
+    Array<{
+      id: number;
+      name: string;
+      email: string;
+      role: Role;
+    }>
+  >(
+    `
+      SELECT u.id, u.name, u.email, u.role
+      FROM sessions s
+      INNER JOIN users u ON u.id = s.user_id
+      WHERE s.token_hash = ?
+        AND s.expires_at > NOW()
+      LIMIT 1
+    `,
+    [hashSessionToken(token)]
+  );
+
+  return rows[0] ?? null;
+}
+
+export async function requireUser() {
+  const user = await getSessionUser();
+  if (!user) {
+    redirect("/login");
+  }
+  return user;
+}
+
+export async function requireRole(roles: Role | Role[]) {
+  const user = await requireUser();
+  const allowedRoles = Array.isArray(roles) ? roles : [roles];
+
+  if (!allowedRoles.includes(user.role)) {
+    redirect(getRoleHome(user.role));
+  }
+
+  return user;
+}
+
+export function getRoleHome(role: Role) {
+  switch (role) {
+    case "admin":
+      return "/admin";
+    case "organiser":
+      return "/organiser";
+    case "attendee":
+      return "/attendee";
+  }
+}
+
+export async function getUserByEmail(email: string) {
+  const rows = await query<UserRow[]>(
+    "SELECT id, name, email, role, password_hash FROM users WHERE email = ? LIMIT 1",
+    [email]
+  );
+
+  return rows[0] ?? null;
+}
+
+export function toSessionUser(user: Pick<UserRow, "id" | "name" | "email" | "role">): SessionUser {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+  };
+}

@@ -1,0 +1,63 @@
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(190) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'organiser', 'attendee') NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  token_hash CHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_sessions_user
+    FOREIGN KEY (user_id) REFERENCES users (id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS events (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  organiser_id BIGINT UNSIGNED NOT NULL,
+  title VARCHAR(160) NOT NULL,
+  category VARCHAR(80) NOT NULL,
+  venue VARCHAR(160) NOT NULL,
+  city VARCHAR(120) NOT NULL,
+  starts_at DATETIME NOT NULL,
+  ends_at DATETIME NOT NULL,
+  price_cents INT UNSIGNED NOT NULL,
+  capacity INT UNSIGNED NOT NULL,
+  excerpt VARCHAR(220) NOT NULL,
+  description TEXT NOT NULL,
+  status ENUM('scheduled', 'cancelled') NOT NULL DEFAULT 'scheduled',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_events_organiser
+    FOREIGN KEY (organiser_id) REFERENCES users (id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code CHAR(10) NOT NULL UNIQUE,
+  event_id BIGINT UNSIGNED NOT NULL,
+  attendee_id BIGINT UNSIGNED NOT NULL,
+  seats INT UNSIGNED NOT NULL,
+  total_cents INT UNSIGNED NOT NULL,
+  status ENUM('confirmed', 'cancelled') NOT NULL DEFAULT 'confirmed',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_bookings_event
+    FOREIGN KEY (event_id) REFERENCES events (id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_bookings_attendee
+    FOREIGN KEY (attendee_id) REFERENCES users (id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX idx_sessions_token ON sessions (token_hash);
+CREATE INDEX idx_events_start ON events (starts_at);
+CREATE INDEX idx_bookings_event_status ON bookings (event_id, status);
+CREATE INDEX idx_bookings_attendee_status ON bookings (attendee_id, status);
