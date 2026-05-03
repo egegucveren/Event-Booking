@@ -495,6 +495,12 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.event-grid--compact .event-card__media {
+  background-color: #1a2636;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 .event-card {
   background:
     linear-gradient(180deg, rgba(16, 31, 50, 0.98), rgba(9, 18, 31, 0.98));

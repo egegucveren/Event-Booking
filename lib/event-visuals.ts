@@ -1,28 +1,98 @@
 type VisualLookup = {
   imagePath: string;
+  imagePosition: {
+    compact: string;
+    showcase: string;
+    detail: string;
+  };
+  imageSize: {
+    compact: string;
+    showcase: string;
+    detail: string;
+  };
 };
 
 const visualsByTitle: Record<string, VisualLookup> = {
   "neon-rooftop-session": {
-    imagePath: "/event-backgrounds/neon-rooftop-session.png"
+    imagePath: "/event-backgrounds/neon-rooftop-session.png",
+    imagePosition: {
+      compact: "center 58%",
+      showcase: "center 58%",
+      detail: "center 58%"
+    },
+    imageSize: {
+      compact: "contain",
+      showcase: "cover",
+      detail: "cover"
+    }
   },
   "founders-sprint-workshop": {
-    imagePath: "/event-backgrounds/founders-sprint-workshop.png"
+    imagePath: "/event-backgrounds/founders-sprint-workshop.png",
+    imagePosition: {
+      compact: "center 36%",
+      showcase: "center 24%",
+      detail: "center 30%"
+    },
+    imageSize: {
+      compact: "118%",
+      showcase: "cover",
+      detail: "cover"
+    }
   },
   "sunrise-reset-club": {
-    imagePath: "/event-backgrounds/sunrise-reset-club.png"
+    imagePath: "/event-backgrounds/sunrise-reset-club.png",
+    imagePosition: {
+      compact: "center 34%",
+      showcase: "center 72%",
+      detail: "center 62%"
+    },
+    imageSize: {
+      compact: "122%",
+      showcase: "cover",
+      detail: "cover"
+    }
   }
 };
 
 const visualsByCategory: Record<string, VisualLookup> = {
   music: {
-    imagePath: "/event-backgrounds/neon-rooftop-session.png"
+    imagePath: "/event-backgrounds/neon-rooftop-session.png",
+    imagePosition: {
+      compact: "center 58%",
+      showcase: "center 58%",
+      detail: "center 58%"
+    },
+    imageSize: {
+      compact: "contain",
+      showcase: "cover",
+      detail: "cover"
+    }
   },
   workshop: {
-    imagePath: "/event-backgrounds/founders-sprint-workshop.png"
+    imagePath: "/event-backgrounds/founders-sprint-workshop.png",
+    imagePosition: {
+      compact: "center 36%",
+      showcase: "center 24%",
+      detail: "center 30%"
+    },
+    imageSize: {
+      compact: "118%",
+      showcase: "cover",
+      detail: "cover"
+    }
   },
   wellness: {
-    imagePath: "/event-backgrounds/sunrise-reset-club.png"
+    imagePath: "/event-backgrounds/sunrise-reset-club.png",
+    imagePosition: {
+      compact: "center 34%",
+      showcase: "center 72%",
+      detail: "center 62%"
+    },
+    imageSize: {
+      compact: "122%",
+      showcase: "cover",
+      detail: "cover"
+    }
   }
 };
 
@@ -41,6 +111,16 @@ export function getEventVisual(title: string, category: string) {
   }
 
   return visualsByCategory[slugify(category)] ?? {
-    imagePath: "/event-backgrounds/founders-sprint-workshop.png"
+    imagePath: "/event-backgrounds/founders-sprint-workshop.png",
+    imagePosition: {
+      compact: "center 36%",
+      showcase: "center 24%",
+      detail: "center 30%"
+    },
+    imageSize: {
+      compact: "118%",
+      showcase: "cover",
+      detail: "cover"
+    }
   };
 }
