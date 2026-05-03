@@ -11,8 +11,8 @@ type EventCardProps = {
 
 export function EventCard({ event, variant = "default" }: EventCardProps) {
   const startDate = parseSqlDateTime(event.startsAt);
-  const dayLabel = new Intl.DateTimeFormat("en-IE", { day: "2-digit" }).format(startDate);
-  const monthLabel = new Intl.DateTimeFormat("en-IE", { month: "short" }).format(startDate);
+  const dayLabel = `${startDate.getDate()}`.padStart(2, "0");
+  const monthLabel = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][startDate.getMonth()];
   const showcasePosterStyle = {
     backgroundImage: `linear-gradient(180deg, rgba(13, 22, 33, 0.14), rgba(13, 22, 33, 0.56)), url(${event.imagePath})`
   };
