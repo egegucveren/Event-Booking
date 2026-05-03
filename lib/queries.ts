@@ -91,6 +91,8 @@ function mapEvent(row: EventRow): EventCardData {
     title: row.title,
     category: row.category,
     imagePath: visual.imagePath,
+    imagePosition: visual.imagePosition,
+    imageSize: visual.imageSize,
     venue: row.venue,
     city: row.city,
     startsAt: row.startsAt,

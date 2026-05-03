@@ -14,10 +14,14 @@ export function EventCard({ event, variant = "default" }: EventCardProps) {
   const dayLabel = `${startDate.getDate()}`.padStart(2, "0");
   const monthLabel = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][startDate.getMonth()];
   const showcasePosterStyle = {
-    backgroundImage: `linear-gradient(180deg, rgba(13, 22, 33, 0.14), rgba(13, 22, 33, 0.56)), url(${event.imagePath})`
+    backgroundImage: `linear-gradient(180deg, rgba(13, 22, 33, 0.14), rgba(13, 22, 33, 0.56)), url(${event.imagePath})`,
+    backgroundPosition: event.imagePosition.showcase,
+    backgroundSize: event.imageSize.showcase
   };
   const defaultPosterStyle = {
-    backgroundImage: `radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.26), transparent 18%), linear-gradient(180deg, rgba(11, 20, 31, 0.12), rgba(11, 20, 31, 0.48)), url(${event.imagePath})`
+    backgroundImage: `radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.26), transparent 18%), linear-gradient(180deg, rgba(11, 20, 31, 0.12), rgba(11, 20, 31, 0.48)), url(${event.imagePath})`,
+    backgroundPosition: event.imagePosition.compact,
+    backgroundSize: event.imageSize.compact
   };
 
   if (variant === "showcase") {

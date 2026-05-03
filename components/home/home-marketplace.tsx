@@ -206,13 +206,6 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             </ul>
           </div>
 
-          <div className="market-sidebar__panel market-sidebar__panel--accent">
-            <p className="market-sidebar__eyebrow">Why this layout</p>
-            <p>
-              Real artwork plus live filters makes the page feel less like a static assignment landing page and more like a
-              usable event marketplace.
-            </p>
-          </div>
         </aside>
 
         <div className="market-content">
@@ -256,27 +249,6 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
         </div>
       </section>
 
-      <section className="market-benefits">
-        <SectionHeading
-          eyebrow="Booking flow"
-          title="A cleaner storefront backed by better page logic"
-          body="The visuals are stronger, and the catalogue behavior is stronger too: counts, spotlight content, categories, and cities all respond to what the user is currently browsing."
-        />
-        <div className="market-benefits__grid">
-          <article className="market-benefit-card">
-            <h3>Real event imagery</h3>
-            <p>Each seeded event now has a dedicated background image that makes the listing cards feel intentional and premium.</p>
-          </article>
-          <article className="market-benefit-card">
-            <h3>Live catalogue filtering</h3>
-            <p>Category chips and sidebar buttons now filter the event list instead of acting like static decoration.</p>
-          </article>
-          <article className="market-benefit-card">
-            <h3>Context-aware merchandising</h3>
-            <p>The hero summary and spotlight panel update based on the visible events, which keeps the page coherent as filters change.</p>
-          </article>
-        </div>
-      </section>
     </div>
   );
 }

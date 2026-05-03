@@ -25,7 +25,9 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
 
   const attendeeCanBook = user?.role === "attendee" && event.status === "scheduled" && event.remainingSeats > 0;
   const detailBannerStyle = {
-    backgroundImage: `linear-gradient(90deg, rgba(7, 18, 30, 0.78) 0%, rgba(7, 18, 30, 0.58) 42%, rgba(7, 18, 30, 0.22) 100%), url(${event.imagePath})`
+    backgroundImage: `linear-gradient(90deg, rgba(7, 18, 30, 0.78) 0%, rgba(7, 18, 30, 0.58) 42%, rgba(7, 18, 30, 0.22) 100%), url(${event.imagePath})`,
+    backgroundPosition: event.imagePosition.detail,
+    backgroundSize: event.imageSize.detail
   };
 
   return (

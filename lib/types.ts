@@ -16,6 +16,16 @@ export type EventCardData = {
   title: string;
   category: string;
   imagePath: string;
+  imagePosition: {
+    compact: string;
+    showcase: string;
+    detail: string;
+  };
+  imageSize: {
+    compact: string;
+    showcase: string;
+    detail: string;
+  };
   venue: string;
   city: string;
   startsAt: string;
