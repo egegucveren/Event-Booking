@@ -17,6 +17,11 @@ const faqGroups = [
           "Yes. Confirmed bookings can be cancelled from the attendee dashboard, and the seats return to the event availability count."
       },
       {
+        question: "Can I get a refund after cancelling?",
+        answer:
+          "Unfortunately, refunds are not available once a ticket has been purchased."
+      },
+      {
         question: "Why can I not book as an organiser or admin?",
         answer:
           "Booking is limited to attendee accounts. Organisers manage listings, while admins manage users and monitor platform activity."
