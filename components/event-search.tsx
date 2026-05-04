@@ -62,7 +62,11 @@ export function EventSearch({ events }: EventSearchProps) {
           </select>
         </div>
 
-        <p>{filteredEvents.length} event found</p>
+        {filteredEvents.length === 0 ? (
+  <p>No events found. Try a different search or filter.</p>
+) : (
+  <p>{filteredEvents.length} event{filteredEvents.length > 1 ? "s" : ""} found</p>
+)}
 
 <div className="stack-md">
   {filteredEvents.map((event) => (
