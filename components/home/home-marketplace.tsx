@@ -24,6 +24,7 @@ type HomeMarketplaceProps = {
 export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
   const [selectedCategory, setSelectedCategory] = useState("All experiences");
   const [selectedCity, setSelectedCity] = useState("All cities");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categoryOptions = ["All experiences", ...new Set(events.map((event) => event.category))];
   const cityOptions = [
@@ -35,11 +36,14 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
     )
   ];
 
-  const filteredEvents = events.filter((event) => {
-    const categoryMatch = selectedCategory === "All experiences" || event.category === selectedCategory;
-    const cityMatch = selectedCity === "All cities" || event.city === selectedCity;
-    return categoryMatch && cityMatch;
-  });
+const filteredEvents = events.filter((event) => {
+  const searchText = `${event.title} ${event.city} ${event.category} ${event.excerpt}`.toLowerCase();
+  const searchMatch = searchText.includes(searchQuery.toLowerCase());
+  const categoryMatch = selectedCategory === "All experiences" || event.category === selectedCategory;
+  const cityMatch = selectedCity === "All cities" || event.city === selectedCity;
+
+  return searchMatch && categoryMatch && cityMatch;
+});
   const categoryFilteredEvents = events.filter(
     (event) => selectedCategory === "All experiences" || event.category === selectedCategory
   );
@@ -122,93 +126,8 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
         </div>
       </section>
 
-      <section className="market-toolbar">
-        <div className="market-toolbar__group">
-          <span className="market-toolbar__label">Popular filters</span>
-          <div className="market-toolbar__chips">
-            {categoryOptions.map((category) => (
-              <button
-                aria-pressed={selectedCategory === category}
-                className={`filter-chip${selectedCategory === category ? " filter-chip--active" : ""}`}
-                key={category}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setSelectedCity("All cities");
-                }}
-                type="button"
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="market-toolbar__result">
-          <strong>{filteredEvents.length}</strong>
-          <span>{filteredEvents.length === 1 ? "featured listing" : "featured listings"}</span>
-        </div>
-      </section>
 
       <section className="market-layout">
-        <aside className="market-sidebar">
-          <div className="market-sidebar__panel">
-            <p className="market-sidebar__eyebrow">Categories</p>
-            <ul className="market-sidebar__list">
-              {categoryOptions.map((category) => {
-                const count =
-                  category === "All experiences" ? events.length : events.filter((event) => event.category === category).length;
-
-                return (
-                  <li key={category}>
-                    <button
-                      aria-pressed={selectedCategory === category}
-                      className={`market-sidebar__button${selectedCategory === category ? " market-sidebar__button--active" : ""}`}
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setSelectedCity("All cities");
-                      }}
-                      type="button"
-                    >
-                      <span>{category}</span>
-                      <strong>{count}</strong>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div className="market-sidebar__panel">
-            <p className="market-sidebar__eyebrow">Browse by city</p>
-            <ul className="market-sidebar__list">
-              {cityOptions.map((city) => {
-                const count =
-                  city === "All cities"
-                    ? categoryFilteredEvents.length
-                    : events.filter(
-                        (event) =>
-                          event.city === city &&
-                          (selectedCategory === "All experiences" || event.category === selectedCategory)
-                      ).length;
-
-                return (
-                  <li key={city}>
-                    <button
-                      aria-pressed={selectedCity === city}
-                      className={`market-sidebar__button${selectedCity === city ? " market-sidebar__button--active" : ""}`}
-                      onClick={() => setSelectedCity(city)}
-                      type="button"
-                    >
-                      <span>{city}</span>
-                      <strong>{count}</strong>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-        </aside>
-
         <div className="market-content">
           <div className="market-spotlight">
             <div>
@@ -225,7 +144,34 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             </Link>
           </div>
 
-          <div className="market-listing-header" id="events">
+
+<div className="market-inline-filters" id="events">
+  <input
+    className="input"
+    placeholder="Search by title, city, or category..."
+    type="text"
+    value={searchQuery}
+    onChange={(event) => setSearchQuery(event.target.value)}
+  />
+
+  <select className="input" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)}>
+    {cityOptions.map((city) => (
+      <option key={city} value={city}>
+        {city}
+      </option>
+    ))}
+  </select>
+
+  <select className="input" value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+    {categoryOptions.map((category) => (
+      <option key={category} value={category}>
+        {category}
+      </option>
+    ))}
+  </select>
+</div>
+
+          <div className="market-listing-header">
             <SectionHeading
               eyebrow="Available listings"
               title="Browse upcoming featured event tickets"
