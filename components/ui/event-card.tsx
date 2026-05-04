@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 
 import { buttonClassName } from "@/components/ui/button";
@@ -9,20 +10,22 @@ type EventCardProps = {
   variant?: "default" | "showcase";
 };
 
+// Renders either the compact attendee card or the wider showcase card
+// while passing image placement through CSS variables for responsive control.
 export function EventCard({ event, variant = "default" }: EventCardProps) {
   const startDate = parseSqlDateTime(event.startsAt);
   const dayLabel = `${startDate.getDate()}`.padStart(2, "0");
   const monthLabel = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][startDate.getMonth()];
   const showcasePosterStyle = {
     backgroundImage: `linear-gradient(180deg, rgba(13, 22, 33, 0.14), rgba(13, 22, 33, 0.56)), url(${event.imagePath})`,
-    backgroundPosition: event.imagePosition.showcase,
-    backgroundSize: event.imageSize.showcase
-  };
+    "--event-image-position": event.imagePosition.showcase,
+    "--event-image-size": event.imageSize.showcase
+  } as CSSProperties;
   const defaultPosterStyle = {
     backgroundImage: `radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.26), transparent 18%), linear-gradient(180deg, rgba(11, 20, 31, 0.12), rgba(11, 20, 31, 0.48)), url(${event.imagePath})`,
-    backgroundPosition: event.imagePosition.compact,
-    backgroundSize: event.imageSize.compact
-  };
+    "--event-image-position": event.imagePosition.compact,
+    "--event-image-size": event.imageSize.compact
+  } as CSSProperties;
 
   if (variant === "showcase") {
     return (

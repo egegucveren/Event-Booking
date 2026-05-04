@@ -21,7 +21,7 @@ const visualsByTitle: Record<string, VisualLookup> = {
       detail: "center 58%"
     },
     imageSize: {
-      compact: "contain",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
@@ -34,7 +34,7 @@ const visualsByTitle: Record<string, VisualLookup> = {
       detail: "center 30%"
     },
     imageSize: {
-      compact: "118%",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
@@ -47,7 +47,7 @@ const visualsByTitle: Record<string, VisualLookup> = {
       detail: "center 62%"
     },
     imageSize: {
-      compact: "122%",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
@@ -63,7 +63,7 @@ const visualsByCategory: Record<string, VisualLookup> = {
       detail: "center 58%"
     },
     imageSize: {
-      compact: "contain",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
@@ -76,7 +76,7 @@ const visualsByCategory: Record<string, VisualLookup> = {
       detail: "center 30%"
     },
     imageSize: {
-      compact: "118%",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
@@ -89,13 +89,14 @@ const visualsByCategory: Record<string, VisualLookup> = {
       detail: "center 62%"
     },
     imageSize: {
-      compact: "122%",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
   }
 };
 
+// Keeps title/category matching stable even when incoming data contains spaces or punctuation.
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -104,6 +105,7 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+// Resolves the artwork and focal points used by compact cards, showcase cards, and detail heroes.
 export function getEventVisual(title: string, category: string) {
   const titleMatch = visualsByTitle[slugify(title)];
   if (titleMatch) {
@@ -118,7 +120,7 @@ export function getEventVisual(title: string, category: string) {
       detail: "center 30%"
     },
     imageSize: {
-      compact: "118%",
+      compact: "cover",
       showcase: "cover",
       detail: "cover"
     }
