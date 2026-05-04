@@ -32,7 +32,8 @@ async function main() {
 
   const schema = fs.readFileSync(path.join(process.cwd(), "database", "schema.sql"), "utf8");
 
-  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`; USE \`${database}\`; ${schema}`);
+  await connection.query(`DROP DATABASE IF EXISTS \`${database}\``);
+  await connection.query(`CREATE DATABASE \`${database}\`; USE \`${database}\`; ${schema}`);
 
   await connection.query("DELETE FROM bookings");
   await connection.query("DELETE FROM sessions");

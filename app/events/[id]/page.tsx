@@ -85,7 +85,13 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 </div>
                 <div>
                   <span>Status</span>
-                  <strong>{event.status === "scheduled" ? "Open" : "Cancelled"}</strong>
+                  <strong>
+                    {event.status !== "scheduled"
+                      ? "Cancelled"
+                      : event.remainingSeats === 0
+                        ? "Sold Out"
+                        : "Open"}
+                  </strong>
                 </div>
               </div>
 

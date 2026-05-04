@@ -32,7 +32,7 @@ export default async function AttendeePage({ searchParams }: AttendeePageProps) 
         <div>
           <p className="eyebrow">Attendee hub</p>
           <h1>Keep bookings close, discover new events quickly, and manage your plans with confidence.</h1>
-          <p>The attendee area proves that the application supports meaningful end-user tasks, not just administration.</p>
+          <p>Track your upcoming events, manage your reservations, and discover what&apos;s next.</p>
         </div>
       </div>
 
@@ -111,7 +111,7 @@ export default async function AttendeePage({ searchParams }: AttendeePageProps) 
         <div className="section-heading">
           <p className="eyebrow">Suggested next</p>
           <h2>Continue discovering</h2>
-          <p>Featured events remain visible to attendees so the booking journey can continue naturally after purchase.</p>
+          <p>Explore more events and keep your calendar full.</p>
         </div>
         <div className="event-grid event-grid--compact">
           {suggestions.map((event) => (

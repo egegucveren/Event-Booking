@@ -61,8 +61,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             <p className="market-hero__eyebrow">Curated Event Tickets</p>
             <h1>Discover standout experiences in a browse-first ticket storefront.</h1>
             <p className="market-hero__body">
-              The catalogue now uses real event artwork and live filtering, so it feels closer to a ticket marketplace and
-              helps users narrow listings instead of reading static promo copy.
+              Browse handpicked events, filter by category or city, and secure your seats in seconds.
             </p>
             <div className="row gap-sm wrap">
               <Link className={buttonClassName("primary")} href="#events">
@@ -80,7 +79,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             <span>
               {activeEvent
                 ? `Currently highlighting ${activeEvent.title} in ${activeEvent.city}.`
-                : "Clean entry flow, lighter category styling, and clearer discovery hierarchy."}
+                : "Explore upcoming events and find your next experience."}
             </span>
             <div className="market-summary-card__stats">
               <div>
@@ -104,8 +103,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
                 : "Live sessions, workshops, and wellness experiences in one curated stream."}
             </h2>
             <p>
-              The layout now borrows the category-page rhythm from Passo but behaves like a real catalogue: every filter,
-              count, and spotlight block responds to the visible event set.
+              Filter by category, browse by city, and book with confidence — every listing is updated in real time.
             </p>
           </div>
           <div className="market-promo-strip__meta">
@@ -215,8 +213,8 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
               <h3>{activeEvent ? activeEvent.title : "Make the listing area the main event."}</h3>
               <p>
                 {activeEvent
-                  ? `${activeEvent.excerpt} The spotlight now follows the selected category and city context instead of staying static.`
-                  : "The spotlight strip mirrors the reference site's merchandising style with a category-first lead card."}
+                  ? activeEvent.excerpt
+                  : "Select a category or city to highlight a featured event here."}
               </p>
             </div>
             <Link className={buttonClassName("secondary")} href={user.organiserHref}>

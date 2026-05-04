@@ -46,7 +46,13 @@ export function EventCard({ event, variant = "default" }: EventCardProps) {
         <div className="event-card__content event-card__content--showcase">
           <div className="event-card__topline">
             <p>Hosted by {event.organiserName}</p>
-            <p>{event.status.charAt(0).toUpperCase() + event.status.slice(1)}</p>
+            <p>
+              {event.status !== "scheduled"
+                ? "Cancelled"
+                : event.remainingSeats === 0
+                  ? "Sold Out"
+                  : "Scheduled"}
+            </p>
           </div>
           <h3>{event.title}</h3>
           <p className="event-card__excerpt">{event.excerpt}</p>
@@ -91,7 +97,13 @@ export function EventCard({ event, variant = "default" }: EventCardProps) {
         <p className="event-card__excerpt">{event.excerpt}</p>
         <div className="event-card__meta">
           <span>{event.capacity} capacity</span>
-          <span>{event.status}</span>
+          <span>
+            {event.status !== "scheduled"
+              ? "Cancelled"
+              : event.remainingSeats === 0
+                ? "Sold Out"
+                : "Scheduled"}
+          </span>
         </div>
         <div className="event-card__footer">
           <div>
