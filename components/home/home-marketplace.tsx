@@ -40,10 +40,13 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
     const cityMatch = selectedCity === "All cities" || event.city === selectedCity;
     return categoryMatch && cityMatch;
   });
+  const categoryFilteredEvents = events.filter(
+    (event) => selectedCategory === "All experiences" || event.category === selectedCategory
+  );
 
   const activeEvent = filteredEvents[0] ?? events[0] ?? null;
   const featuredPrice = activeEvent ? formatCurrencyFromCents(activeEvent.priceCents) : "EUR 0.00";
-  const activeCategoryCount = events.filter((event) => selectedCategory === "All experiences" || event.category === selectedCategory).length;
+  const activeCategoryCount = categoryFilteredEvents.length;
 
   return (
     <div className="market-page">
@@ -103,7 +106,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
                 : "Live sessions, workshops, and wellness experiences in one curated stream."}
             </h2>
             <p>
-              Filter by category, browse by city, and book with confidence — every listing is updated in real time.
+              Filter by category, browse by city, and book with confidence - every listing is updated in real time.
             </p>
           </div>
           <div className="market-promo-strip__meta">
@@ -180,7 +183,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
               {cityOptions.map((city) => {
                 const count =
                   city === "All cities"
-                    ? filteredEvents.length
+                    ? categoryFilteredEvents.length
                     : events.filter(
                         (event) =>
                           event.city === city &&

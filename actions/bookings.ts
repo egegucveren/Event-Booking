@@ -12,7 +12,7 @@ import { getEventById } from "@/lib/queries";
 import { bookingCancelSchema, bookingSchema, idleFormState, validationErrorState } from "@/lib/validation";
 
 function createBookingCode() {
-  // Use all 8 hex chars (16^8 ≈ 4B combinations) — no slice
+  // Use all 8 hex chars (16^8 is about 4B combinations), no slice.
   return `PP-${randomBytes(4).toString("hex").toUpperCase()}`;
 }
 

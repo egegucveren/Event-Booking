@@ -48,13 +48,21 @@ async function main() {
       VALUES
         ('Admin User', 'admin@pulsepass.local', ?, 'admin'),
         ('Maya Quinn', 'organiser@pulsepass.local', ?, 'organiser'),
-        ('Leo Hart', 'attendee@pulsepass.local', ?, 'attendee')
+        ('Leo Hart', 'attendee@pulsepass.local', ?, 'attendee'),
+        ('Ava Brooks', 'ava@pulsepass.local', ?, 'attendee'),
+        ('Noah Reed', 'noah@pulsepass.local', ?, 'attendee'),
+        ('Sofia Lane', 'sofia@pulsepass.local', ?, 'attendee'),
+        ('Ethan Stone', 'ethan@pulsepass.local', ?, 'attendee')
     `,
-    [passwordHash, passwordHash, passwordHash]
+    [passwordHash, passwordHash, passwordHash, passwordHash, passwordHash, passwordHash, passwordHash]
   );
 
   const organiserId = Number(userResult.insertId) + 1;
   const attendeeId = Number(userResult.insertId) + 2;
+  const avaId = Number(userResult.insertId) + 3;
+  const noahId = Number(userResult.insertId) + 4;
+  const sofiaId = Number(userResult.insertId) + 5;
+  const ethanId = Number(userResult.insertId) + 6;
 
   const [eventResult] = await connection.execute(
     `
@@ -75,9 +83,11 @@ async function main() {
       VALUES
         (?, 'Neon Rooftop Session', 'Music', 'Harbour Deck', 'Dublin', '2026-06-12 19:00:00', '2026-06-12 23:00:00', 4500, 138, 'Live electronica with skyline views and a polished guest check-in flow.', 'An elevated late-evening experience for guests who want crisp production, warm lighting, and a seamless arrival journey. The session blends live electronic sets, a curated tasting bar, and structured attendee support from booking through venue entry.', 'scheduled'),
         (?, 'Founders Sprint Workshop', 'Workshop', 'Mill Studio', 'Cork', '2026-06-20 10:00:00', '2026-06-20 16:00:00', 8900, 48, 'A practical build day for early-stage founders and product teams.', 'This workshop helps organisers run a premium daytime event with real session planning, downloadable materials, and a paced agenda. Attendees leave with a sharper project brief, clearer priorities, and a stronger network.', 'scheduled'),
-        (?, 'Sunrise Reset Club', 'Wellness', 'Cliff Pavilion', 'Galway', '2026-07-04 07:30:00', '2026-07-04 10:30:00', 3200, 60, 'Breathwork, mobility, and a social breakfast by the sea.', 'Designed for community-focused event brands, this morning format combines movement, guided breathing, and healthy food service in a compact booking flow that is easy for attendees to understand and easy for organisers to manage.', 'scheduled')
+        (?, 'Sunrise Reset Club', 'Wellness', 'Cliff Pavilion', 'Galway', '2026-07-04 07:30:00', '2026-07-04 10:30:00', 3200, 60, 'Breathwork, mobility, and a social breakfast by the sea.', 'Designed for community-focused event brands, this morning format combines movement, guided breathing, and healthy food service in a compact booking flow that is easy for attendees to understand and easy for organisers to manage.', 'scheduled'),
+        (?, 'Limerick Food Trail', 'Food', 'Market Hall', 'Limerick', '2026-07-18 13:00:00', '2026-07-18 17:00:00', 5200, 90, 'A guided afternoon of local tastings, chef demos, and small-batch producers.', 'This food experience brings attendees through a curated tasting route with timed sessions, producer stories, and a relaxed marketplace finish. It is built for simple ticketing, clear capacity planning, and smooth guest flow.', 'scheduled'),
+        (?, 'Product Leaders Forum', 'Tech', 'Docklands Hub', 'Dublin', '2026-08-01 09:30:00', '2026-08-01 15:30:00', 7600, 110, 'Talks and roundtables for product, design, and engineering leaders.', 'A focused conference format with practical sessions, panel discussion, and structured networking. Organisers can highlight agenda depth while attendees get a clear reason to reserve a seat early.', 'scheduled')
     `,
-    [organiserId, organiserId, organiserId]
+    [organiserId, organiserId, organiserId, organiserId, organiserId]
   );
 
   const firstEventId = Number(eventResult.insertId);
@@ -86,10 +96,45 @@ async function main() {
     `
       INSERT INTO bookings (code, event_id, attendee_id, seats, total_cents, status)
       VALUES
-        ('PP-7K4Q9X', ?, ?, 2, 9000, 'confirmed'),
-        ('PP-2M8R1L', ?, ?, 1, 8900, 'confirmed')
+        ('PP-7K4Q9X', ?, ?, 12, 54000, 'confirmed'),
+        ('PP-9D3M2A', ?, ?, 8, 36000, 'confirmed'),
+        ('PP-5P8T1N', ?, ?, 6, 27000, 'confirmed'),
+        ('PP-2M8R1L', ?, ?, 10, 89000, 'confirmed'),
+        ('PP-4C6V7B', ?, ?, 7, 62300, 'confirmed'),
+        ('PP-8R2L5S', ?, ?, 5, 44500, 'confirmed'),
+        ('PP-6H1W9Q', ?, ?, 9, 28800, 'confirmed'),
+        ('PP-3N7K5D', ?, ?, 4, 12800, 'confirmed'),
+        ('PP-1F8D4J', ?, ?, 11, 57200, 'confirmed'),
+        ('PP-9L2P6C', ?, ?, 6, 31200, 'confirmed'),
+        ('PP-5T4X8A', ?, ?, 14, 106400, 'confirmed'),
+        ('PP-7V1N3M', ?, ?, 8, 60800, 'confirmed')
     `,
-    [firstEventId, attendeeId, firstEventId + 1, attendeeId]
+    [
+      firstEventId,
+      attendeeId,
+      firstEventId,
+      avaId,
+      firstEventId,
+      noahId,
+      firstEventId + 1,
+      attendeeId,
+      firstEventId + 1,
+      sofiaId,
+      firstEventId + 1,
+      ethanId,
+      firstEventId + 2,
+      avaId,
+      firstEventId + 2,
+      sofiaId,
+      firstEventId + 3,
+      attendeeId,
+      firstEventId + 3,
+      ethanId,
+      firstEventId + 4,
+      noahId,
+      firstEventId + 4,
+      sofiaId
+    ]
   );
 
   await connection.end();
@@ -99,6 +144,10 @@ async function main() {
   console.log("  admin@pulsepass.local / Passo123!");
   console.log("  organiser@pulsepass.local / Passo123!");
   console.log("  attendee@pulsepass.local / Passo123!");
+  console.log("  ava@pulsepass.local / Passo123!");
+  console.log("  noah@pulsepass.local / Passo123!");
+  console.log("  sofia@pulsepass.local / Passo123!");
+  console.log("  ethan@pulsepass.local / Passo123!");
 }
 
 main().catch((error) => {
