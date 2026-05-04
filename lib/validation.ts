@@ -50,7 +50,19 @@ export const eventSchema = z
     status: z.enum(["scheduled", "cancelled"]).default("scheduled")
   })
   .superRefine((value, ctx) => {
-    if (new Date(value.endsAt) <= new Date(value.startsAt)) {
+    const now = new Date();
+    const startsAt = new Date(value.startsAt);
+    const endsAt = new Date(value.endsAt);
+
+    if (startsAt <= now) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["startsAt"],
+        message: "Start time must be in the future."
+      });
+    }
+
+    if (endsAt <= startsAt) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["endsAt"],

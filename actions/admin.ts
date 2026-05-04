@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth";
-import { execute } from "@/lib/db";
+import { execute, query } from "@/lib/db";
 import { roleUpdateSchema, userDeleteSchema } from "@/lib/validation";
 
 export async function updateUserRoleAction(formData: FormData) {
@@ -19,7 +19,21 @@ export async function updateUserRoleAction(formData: FormData) {
     redirect("/admin");
   }
 
-  if (parsed.data.userId === admin.id && parsed.data.role !== "admin") {
+  // Cannot demote yourself
+  if (parsed.data.userId === admin.id) {
+    redirect("/admin");
+  }
+
+  // Only the owner can grant or revoke admin role
+  const [target] = await query<Array<{ role: string }>>(
+    "SELECT role FROM users WHERE id = ? LIMIT 1",
+    [parsed.data.userId]
+  );
+
+  const targetIsAdmin = target?.role === "admin";
+  const changingToAdmin = parsed.data.role === "admin";
+
+  if ((targetIsAdmin || changingToAdmin) && !admin.isOwner) {
     redirect("/admin");
   }
 
@@ -40,7 +54,18 @@ export async function deleteUserAction(formData: FormData) {
     redirect("/admin");
   }
 
+  // Cannot delete yourself
   if (parsed.data.userId === admin.id) {
+    redirect("/admin");
+  }
+
+  // Only the owner can delete other admins
+  const [target] = await query<Array<{ role: string }>>(
+    "SELECT role FROM users WHERE id = ? LIMIT 1",
+    [parsed.data.userId]
+  );
+
+  if (target?.role === "admin" && !admin.isOwner) {
     redirect("/admin");
   }
 

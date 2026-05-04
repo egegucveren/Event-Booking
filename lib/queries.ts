@@ -67,6 +67,7 @@ type AdminUserRow = RowDataPacket & {
   name: string;
   email: string;
   role: Role;
+  isOwner: number;
   createdAt: string;
   eventsCreated: number;
   bookingsMade: number;
@@ -360,6 +361,7 @@ export async function getAdminUsers() {
         u.name,
         u.email,
         u.role,
+        u.is_owner AS isOwner,
         u.created_at AS createdAt,
         COUNT(DISTINCT e.id) AS eventsCreated,
         COUNT(DISTINCT b.id) AS bookingsMade
@@ -376,6 +378,7 @@ export async function getAdminUsers() {
     name: row.name,
     email: row.email,
     role: row.role,
+    isOwner: row.isOwner === 1,
     createdAt: row.createdAt,
     eventsCreated: Number(row.eventsCreated),
     bookingsMade: Number(row.bookingsMade)

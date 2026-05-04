@@ -82,6 +82,8 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 <tbody>
                   {users.map((user) => {
                     const isCurrentAdmin = user.id === admin.id;
+                    const targetIsAdmin = user.role === "admin";
+                    const canEdit = !isCurrentAdmin && (admin.isOwner || !targetIsAdmin);
 
                     return (
                       <tr key={user.id}>
@@ -90,7 +92,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                           <span>{user.email}</span>
                         </td>
                         <td>
-                          <StatusBadge label={user.role} tone={getRoleTone(user.role)} />
+                          <div className="row gap-sm">
+                            <StatusBadge label={user.role} tone={getRoleTone(user.role)} />
+                            {user.isOwner ? <StatusBadge label="Owner" tone="warning" /> : null}
+                          </div>
                         </td>
                         <td>{formatEventDate(user.createdAt)}</td>
                         <td>
@@ -98,38 +103,36 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                         </td>
                         <td>
                           <div className="row gap-sm wrap">
-                            <form action={updateUserRoleAction} className="inline-form">
-                              <input name="userId" type="hidden" value={user.id} />
-                              <select
-                                className="input input--compact"
-                                defaultValue={user.role}
-                                disabled={isCurrentAdmin}
-                                name="role"
-                              >
-                                {roleOptions.map((role) => (
-                                  <option key={role} value={role}>
-                                    {role}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                className={buttonClassName("secondary", "sm")}
-                                disabled={isCurrentAdmin}
-                                type="submit"
-                              >
-                                Save
-                              </button>
-                            </form>
-
                             {isCurrentAdmin ? (
-                              <StatusBadge label="Current admin" tone="default" />
+                              <StatusBadge label="You" tone="default" />
+                            ) : canEdit ? (
+                              <>
+                                <form action={updateUserRoleAction} className="inline-form">
+                                  <input name="userId" type="hidden" value={user.id} />
+                                  <select
+                                    className="input input--compact"
+                                    defaultValue={user.role}
+                                    name="role"
+                                  >
+                                    {roleOptions.map((role) => (
+                                      <option key={role} value={role}>
+                                        {role}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <button className={buttonClassName("secondary", "sm")} type="submit">
+                                    Save
+                                  </button>
+                                </form>
+                                <form action={deleteUserAction}>
+                                  <input name="userId" type="hidden" value={user.id} />
+                                  <button className={buttonClassName("danger", "sm")} type="submit">
+                                    Delete
+                                  </button>
+                                </form>
+                              </>
                             ) : (
-                              <form action={deleteUserAction}>
-                                <input name="userId" type="hidden" value={user.id} />
-                                <button className={buttonClassName("danger", "sm")} type="submit">
-                                  Delete
-                                </button>
-                              </form>
+                              <StatusBadge label="Admin" tone="default" />
                             )}
                           </div>
                         </td>

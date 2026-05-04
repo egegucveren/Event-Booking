@@ -15,6 +15,7 @@ type UserRow = {
   name: string;
   email: string;
   role: Role;
+  is_owner: number;
   password_hash: string;
 };
 
@@ -90,10 +91,11 @@ export async function getSessionUser() {
       name: string;
       email: string;
       role: Role;
+      is_owner: number;
     }>
   >(
     `
-      SELECT u.id, u.name, u.email, u.role
+      SELECT u.id, u.name, u.email, u.role, u.is_owner
       FROM sessions s
       INNER JOIN users u ON u.id = s.user_id
       WHERE s.token_hash = ?
@@ -103,7 +105,9 @@ export async function getSessionUser() {
     [hashSessionToken(token)]
   );
 
-  return rows[0] ?? null;
+  const row = rows[0];
+  if (!row) return null;
+  return { id: row.id, name: row.name, email: row.email, role: row.role, isOwner: row.is_owner === 1 };
 }
 
 export async function requireUser() {
@@ -138,18 +142,19 @@ export function getRoleHome(role: Role) {
 
 export async function getUserByEmail(email: string) {
   const rows = await query<UserRow[]>(
-    "SELECT id, name, email, role, password_hash FROM users WHERE email = ? LIMIT 1",
+    "SELECT id, name, email, role, is_owner, password_hash FROM users WHERE email = ? LIMIT 1",
     [email]
   );
 
   return rows[0] ?? null;
 }
 
-export function toSessionUser(user: Pick<UserRow, "id" | "name" | "email" | "role">): SessionUser {
+export function toSessionUser(user: Pick<UserRow, "id" | "name" | "email" | "role" | "is_owner">): SessionUser {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role
+    role: user.role,
+    isOwner: user.is_owner === 1
   };
 }

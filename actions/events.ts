@@ -143,6 +143,16 @@ export async function updateEventAction(_: typeof idleFormState, formData: FormD
     ]
   );
 
+  // When an event is cancelled, cancel all confirmed bookings so attendees
+  // are not left with a "Confirmed" status on a cancelled event.
+  if (parsed.data.status === "cancelled") {
+    await execute(
+      `UPDATE bookings SET status = 'cancelled' WHERE event_id = ? AND status = 'confirmed'`,
+      [eventId]
+    );
+    revalidatePath("/attendee");
+  }
+
   revalidatePath("/");
   revalidatePath(`/events/${eventId}`);
   revalidatePath("/organiser");

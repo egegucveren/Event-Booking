@@ -44,15 +44,15 @@ async function main() {
 
   const [userResult] = await connection.execute(
     `
-      INSERT INTO users (name, email, password_hash, role)
+      INSERT INTO users (name, email, password_hash, role, is_owner)
       VALUES
-        ('Admin User', 'admin@pulsepass.local', ?, 'admin'),
-        ('Maya Quinn', 'organiser@pulsepass.local', ?, 'organiser'),
-        ('Leo Hart', 'attendee@pulsepass.local', ?, 'attendee'),
-        ('Ava Brooks', 'ava@pulsepass.local', ?, 'attendee'),
-        ('Noah Reed', 'noah@pulsepass.local', ?, 'attendee'),
-        ('Sofia Lane', 'sofia@pulsepass.local', ?, 'attendee'),
-        ('Ethan Stone', 'ethan@pulsepass.local', ?, 'attendee')
+        ('Admin User', 'admin@pulsepass.local', ?, 'admin', 1),
+        ('Maya Quinn', 'organiser@pulsepass.local', ?, 'organiser', 0),
+        ('Leo Hart', 'attendee@pulsepass.local', ?, 'attendee', 0),
+        ('Ava Brooks', 'ava@pulsepass.local', ?, 'attendee', 0),
+        ('Noah Reed', 'noah@pulsepass.local', ?, 'attendee', 0),
+        ('Sofia Lane', 'sofia@pulsepass.local', ?, 'attendee', 0),
+        ('Ethan Stone', 'ethan@pulsepass.local', ?, 'attendee', 0)
     `,
     [passwordHash, passwordHash, passwordHash, passwordHash, passwordHash, passwordHash, passwordHash]
   );
