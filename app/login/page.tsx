@@ -33,6 +33,18 @@ export default async function LoginPage() {
             <li>
               <strong>Attendee:</strong> attendee@pulsepass.local / Passo123!
             </li>
+            <li>
+              <strong>Attendee:</strong> ava@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> noah@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> sofia@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> ethan@pulsepass.local / Passo123!
+            </li>
           </ul>
         </div>
 
