@@ -1180,6 +1180,72 @@ button {
   gap: 10px;
 }
 
+.faq-layout {
+  align-items: start;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(260px, 0.35fr) minmax(0, 1fr);
+}
+
+.faq-aside {
+  position: sticky;
+  top: 110px;
+}
+
+.faq-aside h2 {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.faq-content {
+  min-width: 0;
+}
+
+.faq-list {
+  display: grid;
+  gap: 12px;
+}
+
+.faq-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(130, 151, 173, 0.22);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.faq-item summary {
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 800;
+  list-style: none;
+  padding: 18px 20px;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  color: var(--muted);
+  content: "+";
+  float: right;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.faq-item[open] summary::after {
+  content: "-";
+}
+
+.faq-item p {
+  border-top: 1px solid rgba(130, 151, 173, 0.16);
+  color: var(--muted);
+  margin: 0;
+  padding: 16px 20px 20px;
+}
+
 .activity-card__meta {
   align-items: flex-end;
   color: var(--muted);
@@ -1764,8 +1830,13 @@ button {
   .hero,
   .detail-grid,
   .auth-layout,
-  .admin-layout {
+  .admin-layout,
+  .faq-layout {
     grid-template-columns: 1fr;
+  }
+
+  .faq-aside {
+    position: static;
   }
 
   .category-shell,
