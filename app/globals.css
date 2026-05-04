@@ -2113,3 +2113,69 @@ button {
     grid-template-columns: 1fr;
   }
 }
+.event-detail-page {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.event-detail-back {
+  display: inline-flex;
+  margin-bottom: 1rem;
+  color: var(--muted-text);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.event-detail-hero {
+  min-height: 380px;
+  border-radius: 2rem;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 2.5rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.event-detail-hero__content {
+  max-width: 760px;
+  color: white;
+}
+
+.event-detail-hero__content h1 {
+  margin: 1rem 0;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 0.95;
+}
+
+.event-detail-hero__content p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.event-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1rem;
+}
+
+.event-booking-card {
+  align-self: start;
+  position: sticky;
+  top: 6rem;
+}
+
+.event-booking-card strong {
+  font-size: 2.2rem;
+}
+
+@media (max-width: 900px) {
+  .event-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-detail-hero {
+    min-height: 300px;
+    padding: 1.5rem;
+  }
+}
