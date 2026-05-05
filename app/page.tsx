@@ -1,4 +1,3 @@
-import { EventSearch } from "@/components/event-search";
 import { HomeMarketplace } from "@/components/home/home-marketplace";
 import { NoticeBanner } from "@/components/ui/notice-banner";
 import { getSessionUser } from "@/lib/auth";
@@ -36,8 +35,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <NoticeBanner text={notice.text} tone={notice.tone} />
         </section>
       ) : null}
-
-      <EventSearch events={events} />
 
       <HomeMarketplace events={events} stats={stats} user={user} />
     </>

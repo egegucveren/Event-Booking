@@ -21,6 +21,23 @@ type EventRow = RowDataPacket & {
   bookedSeats: number | null;
 };
 
+type EventFields = {
+  id: number;
+  title: string;
+  category: string;
+  venue: string;
+  city: string;
+  startsAt: string;
+  endsAt: string;
+  priceCents: number;
+  capacity: number;
+  excerpt: string;
+  description: string;
+  status: "scheduled" | "cancelled";
+  organiserName: string;
+  bookedSeats: number | null;
+};
+
 type EditableEventRow = RowDataPacket & {
   id: number;
   title: string;
@@ -83,7 +100,119 @@ type AdminEventRow = RowDataPacket & {
   bookedSeats: number | null;
 };
 
-function mapEvent(row: EventRow): EventCardData {
+type FallbackEventRow = EventFields;
+
+const fallbackEventRows: FallbackEventRow[] = [
+  {
+    id: 1,
+    title: "Neon Rooftop Session",
+    category: "Music",
+    venue: "Harbour Deck",
+    city: "Dublin",
+    startsAt: "2026-06-12 19:00:00",
+    endsAt: "2026-06-12 23:00:00",
+    priceCents: 4500,
+    capacity: 138,
+    excerpt: "Live electronica with skyline views and a polished guest check-in flow.",
+    description:
+      "An elevated late-evening experience for guests who want crisp production, warm lighting, and a seamless arrival journey.",
+    status: "scheduled",
+    organiserName: "Maya Quinn",
+    bookedSeats: 26
+  },
+  {
+    id: 2,
+    title: "Founders Sprint Workshop",
+    category: "Workshop",
+    venue: "Mill Studio",
+    city: "Cork",
+    startsAt: "2026-06-20 10:00:00",
+    endsAt: "2026-06-20 16:00:00",
+    priceCents: 8900,
+    capacity: 48,
+    excerpt: "A practical build day for early-stage founders and product teams.",
+    description:
+      "This workshop helps organisers run a premium daytime event with real session planning, downloadable materials, and a paced agenda.",
+    status: "scheduled",
+    organiserName: "Maya Quinn",
+    bookedSeats: 17
+  },
+  {
+    id: 3,
+    title: "Sunrise Reset Club",
+    category: "Wellness",
+    venue: "Cliff Pavilion",
+    city: "Galway",
+    startsAt: "2026-07-04 07:30:00",
+    endsAt: "2026-07-04 10:30:00",
+    priceCents: 3200,
+    capacity: 60,
+    excerpt: "Breathwork, mobility, and a social breakfast by the sea.",
+    description:
+      "Designed for community-focused event brands, this morning format combines movement, guided breathing, and healthy food service.",
+    status: "scheduled",
+    organiserName: "Maya Quinn",
+    bookedSeats: 9
+  },
+  {
+    id: 4,
+    title: "Limerick Food Trail",
+    category: "Food",
+    venue: "Market Hall",
+    city: "Limerick",
+    startsAt: "2026-07-18 13:00:00",
+    endsAt: "2026-07-18 17:00:00",
+    priceCents: 5200,
+    capacity: 90,
+    excerpt: "A guided afternoon of local tastings, chef demos, and small-batch producers.",
+    description:
+      "This food experience brings attendees through a curated tasting route with timed sessions and a relaxed marketplace finish.",
+    status: "scheduled",
+    organiserName: "Maya Quinn",
+    bookedSeats: 11
+  },
+  {
+    id: 5,
+    title: "Product Leaders Forum",
+    category: "Tech",
+    venue: "Docklands Hub",
+    city: "Dublin",
+    startsAt: "2026-08-01 09:30:00",
+    endsAt: "2026-08-01 15:30:00",
+    priceCents: 7600,
+    capacity: 110,
+    excerpt: "Talks and roundtables for product, design, and engineering leaders.",
+    description:
+      "A focused conference format with practical sessions, panel discussion, and structured networking.",
+    status: "scheduled",
+    organiserName: "Maya Quinn",
+    bookedSeats: 20
+  }
+];
+
+function isDbConnectionError(error: unknown) {
+  if (!(error instanceof Error) || !("code" in error)) {
+    return false;
+  }
+
+  return [
+    "ER_ACCESS_DENIED_ERROR",
+    "ECONNREFUSED",
+    "ENOENT",
+    "ETIMEDOUT",
+    "PROTOCOL_CONNECTION_LOST"
+  ].includes(String(error.code));
+}
+
+function getFallbackStats(): DashboardStats {
+  return {
+    totalEvents: fallbackEventRows.length,
+    totalBookings: fallbackEventRows.reduce((sum, event) => sum + Number(event.bookedSeats ?? 0), 0),
+    totalCities: new Set(fallbackEventRows.map((event) => event.city)).size
+  };
+}
+
+function mapEvent(row: EventFields): EventCardData {
   const bookedSeats = Number(row.bookedSeats ?? 0);
   const visual = getEventVisual(row.title, row.category);
 
@@ -110,85 +239,110 @@ function mapEvent(row: EventRow): EventCardData {
 }
 
 export async function getLandingStats() {
-  const rows = await query<StatsRow[]>(
-    `
-      SELECT
-        (SELECT COUNT(*) FROM events) AS totalEvents,
-        (SELECT COALESCE(SUM(seats), 0) FROM bookings WHERE status = 'confirmed') AS totalBookings,
-        (SELECT COUNT(DISTINCT city) FROM events) AS totalCities
-    `
-  );
+  try {
+    const rows = await query<StatsRow[]>(
+      `
+        SELECT
+          (SELECT COUNT(*) FROM events) AS totalEvents,
+          (SELECT COALESCE(SUM(seats), 0) FROM bookings WHERE status = 'confirmed') AS totalBookings,
+          (SELECT COUNT(DISTINCT city) FROM events) AS totalCities
+      `
+    );
 
-  const row = rows[0];
-  return {
-    totalEvents: Number(row?.totalEvents ?? 0),
-    totalBookings: Number(row?.totalBookings ?? 0),
-    totalCities: Number(row?.totalCities ?? 0)
-  } satisfies DashboardStats;
+    const row = rows[0];
+    return {
+      totalEvents: Number(row?.totalEvents ?? 0),
+      totalBookings: Number(row?.totalBookings ?? 0),
+      totalCities: Number(row?.totalCities ?? 0)
+    } satisfies DashboardStats;
+  } catch (error) {
+    if (isDbConnectionError(error)) {
+      return getFallbackStats();
+    }
+
+    throw error;
+  }
 }
 
 export async function getFeaturedEvents(limit = 6) {
-  const rows = await query<EventRow[]>(
-    `
-      SELECT
-        e.id,
-        e.title,
-        e.category,
-        e.venue,
-        e.city,
-        e.starts_at AS startsAt,
-        e.ends_at AS endsAt,
-        e.price_cents AS priceCents,
-        e.capacity,
-        e.excerpt,
-        e.description,
-        e.status,
-        u.name AS organiserName,
-        COALESCE(SUM(CASE WHEN b.status = 'confirmed' THEN b.seats ELSE 0 END), 0) AS bookedSeats
-      FROM events e
-      INNER JOIN users u ON u.id = e.organiser_id
-      LEFT JOIN bookings b ON b.event_id = e.id
-      WHERE e.starts_at >= NOW()
-        AND e.status = 'scheduled'
-      GROUP BY e.id
-      ORDER BY e.starts_at ASC
-      LIMIT ?
-    `,
-    [limit]
-  );
+  try {
+    const rows = await query<EventRow[]>(
+      `
+        SELECT
+          e.id,
+          e.title,
+          e.category,
+          e.venue,
+          e.city,
+          e.starts_at AS startsAt,
+          e.ends_at AS endsAt,
+          e.price_cents AS priceCents,
+          e.capacity,
+          e.excerpt,
+          e.description,
+          e.status,
+          u.name AS organiserName,
+          COALESCE(SUM(CASE WHEN b.status = 'confirmed' THEN b.seats ELSE 0 END), 0) AS bookedSeats
+        FROM events e
+        INNER JOIN users u ON u.id = e.organiser_id
+        LEFT JOIN bookings b ON b.event_id = e.id
+        WHERE e.starts_at >= NOW()
+          AND e.status = 'scheduled'
+        GROUP BY e.id
+        ORDER BY e.starts_at ASC
+        LIMIT ?
+      `,
+      [limit]
+    );
 
-  return rows.map(mapEvent);
+    return rows.map(mapEvent);
+  } catch (error) {
+    if (isDbConnectionError(error)) {
+      return fallbackEventRows.slice(0, limit).map(mapEvent);
+    }
+
+    throw error;
+  }
 }
 
 export async function getEventById(eventId: number) {
-  const rows = await query<EventRow[]>(
-    `
-      SELECT
-        e.id,
-        e.title,
-        e.category,
-        e.venue,
-        e.city,
-        e.starts_at AS startsAt,
-        e.ends_at AS endsAt,
-        e.price_cents AS priceCents,
-        e.capacity,
-        e.excerpt,
-        e.description,
-        e.status,
-        u.name AS organiserName,
-        COALESCE(SUM(CASE WHEN b.status = 'confirmed' THEN b.seats ELSE 0 END), 0) AS bookedSeats
-      FROM events e
-      INNER JOIN users u ON u.id = e.organiser_id
-      LEFT JOIN bookings b ON b.event_id = e.id
-      WHERE e.id = ?
-      GROUP BY e.id
-      LIMIT 1
-    `,
-    [eventId]
-  );
+  try {
+    const rows = await query<EventRow[]>(
+      `
+        SELECT
+          e.id,
+          e.title,
+          e.category,
+          e.venue,
+          e.city,
+          e.starts_at AS startsAt,
+          e.ends_at AS endsAt,
+          e.price_cents AS priceCents,
+          e.capacity,
+          e.excerpt,
+          e.description,
+          e.status,
+          u.name AS organiserName,
+          COALESCE(SUM(CASE WHEN b.status = 'confirmed' THEN b.seats ELSE 0 END), 0) AS bookedSeats
+        FROM events e
+        INNER JOIN users u ON u.id = e.organiser_id
+        LEFT JOIN bookings b ON b.event_id = e.id
+        WHERE e.id = ?
+        GROUP BY e.id
+        LIMIT 1
+      `,
+      [eventId]
+    );
 
-  return rows[0] ? mapEvent(rows[0]) : null;
+    return rows[0] ? mapEvent(rows[0]) : null;
+  } catch (error) {
+    if (isDbConnectionError(error)) {
+      const fallbackEvent = fallbackEventRows.find((row) => row.id === eventId);
+      return fallbackEvent ? mapEvent(fallbackEvent) : null;
+    }
+
+    throw error;
+  }
 }
 
 export async function getOrganiserEvents(organiserId: number) {

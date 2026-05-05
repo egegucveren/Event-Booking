@@ -19,11 +19,11 @@ function requireEnv(name: string) {
 const pool =
   global.__pulsepassPool ??
   mysql.createPool({
-    host: process.env.DB_SOCKET ? undefined : requireEnv("DB_HOST"),
+    host: process.env.DB_SOCKET ? undefined : process.env.DB_HOST || "127.0.0.1",
     port: process.env.DB_SOCKET ? undefined : Number(process.env.DB_PORT ?? 3306),
-    user: requireEnv("DB_USER"),
+    user: process.env.DB_USER || "root",
     password: process.env.DB_PASSWORD ?? "",
-    database: requireEnv("DB_NAME"),
+    database: process.env.DB_NAME || "event_booking",
     socketPath: process.env.DB_SOCKET || undefined,
     waitForConnections: true,
     connectionLimit: 10,

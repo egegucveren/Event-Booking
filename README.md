@@ -42,6 +42,7 @@ npm install
 ```
 
 2. Copy `.env.local.example` to `.env.local` and fill in your MySQL credentials.
+   If your local MySQL root user requires a password, set `DB_PASSWORD` before starting the app.
    Socket-based connections are also supported via `DB_SOCKET`.
 
 3. Start MySQL.
