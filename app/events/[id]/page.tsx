@@ -1,22 +1,20 @@
-import { getSessionUser } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BookingForm } from "@/components/forms/booking-form";
 import { buttonClassName } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getSessionUser } from "@/lib/auth";
 import { formatCurrencyFromCents, formatDateRange } from "@/lib/format";
 import { getEventById } from "@/lib/queries";
 
 type EventDetailProps = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 };
 
 export default async function EventDetailPage({ params }: EventDetailProps) {
   const { id } = await params;
-  const event = await getEventById(Number(id));
-  const user = await getSessionUser();
+  const [event, user] = await Promise.all([getEventById(Number(id)), getSessionUser()]);
 
   if (!event) {
     notFound();
@@ -27,6 +25,10 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     backgroundPosition: event.imagePosition.detail,
     backgroundSize: event.imageSize.detail
   };
+
+  const isCancelled = event.status === "cancelled";
+  const isSoldOut = event.remainingSeats === 0;
+  const canBook = !isCancelled && !isSoldOut && user?.role === "attendee";
 
   return (
     <section className="section event-detail-page">
@@ -49,22 +51,17 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <span className="detail-meta__label">When</span>
               <strong>{formatDateRange(event.startsAt, event.endsAt)}</strong>
             </div>
-
             <div>
               <span className="detail-meta__label">Where</span>
-              <strong>
-                {event.venue}, {event.city}
-              </strong>
+              <strong>{event.venue}, {event.city}</strong>
             </div>
-
             <div>
               <span className="detail-meta__label">Capacity</span>
               <strong>{event.capacity} guests</strong>
             </div>
-
             <div>
-              <span className="detail-meta__label">Seats left: </span>
-              <strong>{event.remainingSeats}</strong>
+              <span className="detail-meta__label">Seats left</span>
+              <strong>{isCancelled ? "—" : event.remainingSeats}</strong>
             </div>
           </div>
 
@@ -77,14 +74,37 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
         <aside className="glass-panel stack-md event-booking-card">
           <span>Ticket price</span>
           <strong>{formatCurrencyFromCents(event.priceCents)}</strong>
-          <p>Reserve your seat and manage your booking from your attendee account.</p>
 
-          <Link
-  className={buttonClassName("primary")}
-  href={user ? "/attendee" : "/login"}
->
-  {user ? "Reserve Seat" : "Login to Book"}
-</Link>
+          {isCancelled ? (
+            <>
+              <StatusBadge label="Event Cancelled" tone="warning" />
+              <p>This event has been cancelled. No new bookings can be made.</p>
+            </>
+          ) : isSoldOut ? (
+            <>
+              <StatusBadge label="Sold Out" tone="warning" />
+              <p>All seats have been reserved. Check back for cancellations.</p>
+            </>
+          ) : canBook ? (
+            <BookingForm eventId={event.id} />
+          ) : user?.role === "organiser" || user?.role === "admin" ? (
+            <>
+              <p>Only attendee accounts can book tickets.</p>
+              <Link className={buttonClassName("secondary")} href={user.role === "organiser" ? "/organiser" : "/admin"}>
+                Go to Dashboard
+              </Link>
+            </>
+          ) : (
+            <>
+              <p>Sign in with an attendee account to reserve your seat.</p>
+              <Link className={buttonClassName("primary")} href="/login">
+                Log In to Book
+              </Link>
+              <Link className={buttonClassName("ghost", "sm")} href="/register">
+                Create Account
+              </Link>
+            </>
+          )}
         </aside>
       </div>
     </section>

@@ -19,10 +19,17 @@ export async function submitContactAction(state: FormState, formData: FormData):
     return validationErrorState(parsed.error);
   }
 
-  await execute(
-    "INSERT INTO contact_tickets (name, email, message) VALUES (?, ?, ?)",
-    [parsed.data.name, parsed.data.email, parsed.data.message]
-  );
+  try {
+    await execute(
+      "INSERT INTO contact_tickets (name, email, message) VALUES (?, ?, ?)",
+      [parsed.data.name, parsed.data.email, parsed.data.message]
+    );
+  } catch {
+    return {
+      status: "error",
+      message: "Could not save your message right now. Please try again later or email us directly."
+    };
+  }
 
   revalidatePath("/admin");
   return { status: "success", message: "Your message has been sent. We will get back to you soon." };
