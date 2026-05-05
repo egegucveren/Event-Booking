@@ -7,24 +7,29 @@ const faqGroups = [
     title: "Booking",
     items: [
       {
-        question: "How do attendees book seats?",
+        question: "How do I book tickets for an event?",
         answer:
-          "Attendees log in, open an event detail page, choose the number of seats, and submit the booking form. The system checks capacity before confirming the booking."
+          "Browse events on the home page, click on one you like, choose the number of seats, and confirm your booking. You need a registered attendee account to book."
       },
       {
-        question: "Can attendees cancel a booking?",
+        question: "Can I book multiple seats in one go?",
         answer:
-          "Yes. Confirmed bookings can be cancelled from the attendee dashboard, and the seats return to the event availability count."
+          "Yes. You can reserve up to 6 seats per transaction. If you need more, please contact us directly."
       },
       {
-        question: "Can I get a refund after cancelling?",
+        question: "How do I cancel a booking?",
         answer:
-          "Unfortunately, refunds are not available once a ticket has been purchased."
+          "Log in to your attendee dashboard and click Cancel next to the booking you want to remove. The seats are returned to the event immediately."
       },
       {
-        question: "Why can I not book as an organiser or admin?",
+        question: "Is there a refund policy?",
         answer:
-          "Booking is limited to attendee accounts. Organisers manage listings, while admins manage users and monitor platform activity."
+          "Cancellations are accepted at any time before the event starts, but no monetary refund is issued — ticket payments are non-refundable once processed."
+      },
+      {
+        question: "Why can I not book tickets as an organiser or admin?",
+        answer:
+          "Booking is reserved for attendee accounts. Organisers manage event listings, and admins oversee the platform — neither role can make reservations."
       }
     ]
   },
@@ -32,19 +37,24 @@ const faqGroups = [
     title: "Accounts",
     items: [
       {
-        question: "Which demo accounts are available?",
+        question: "How do I create an account?",
         answer:
-          "After running the seed script, you can use admin@pulsepass.local, organiser@pulsepass.local, or attendee@pulsepass.local with the password Passo123!."
+          "Click Create Account in the top navigation, fill in your name, email address, and choose whether you want an attendee or organiser account."
       },
       {
-        question: "Where does each role go after login?",
+        question: "What is the difference between an attendee and an organiser?",
         answer:
-          "Admins are sent to the admin panel, organisers to the organiser dashboard, and attendees to their booking dashboard."
+          "Attendees browse and book events. Organisers create, edit, and manage their own event listings and can track bookings from their dashboard."
       },
       {
-        question: "Can admins change their own role?",
+        question: "Can I change my account role after signing up?",
         answer:
-          "The server protects admin access, and the admin page also disables the current admin's role controls to avoid accidental changes."
+          "Roles can only be changed by a platform administrator. If you need a different role, reach out via the Contact page."
+      },
+      {
+        question: "I forgot my password — how do I reset it?",
+        answer:
+          "Password reset is not available in the current version. Please contact the platform admin through the Contact page for assistance."
       }
     ]
   },
@@ -52,19 +62,44 @@ const faqGroups = [
     title: "Events",
     items: [
       {
-        question: "Who can create and manage events?",
+        question: "Who can create events on PulsePass?",
         answer:
-          "Organiser accounts can create, edit, and delete their own events. Admins can monitor recent platform activity from the admin area."
+          "Any organiser account can create events from the organiser dashboard. Organisers can also edit and delete their own listings at any time."
       },
       {
-        question: "How are categories and cities shown?",
+        question: "What event categories are available?",
         answer:
-          "The homepage builds category and city filters from the active event data, so seeded or newly created events appear in the filters automatically."
+          "Events are grouped into six categories: Music, Workshop, Wellness, Food, Sports, and Community."
       },
       {
-        question: "What happens when an event is full?",
+        question: "What happens if an event is cancelled?",
         answer:
-          "When confirmed bookings reach the event capacity, the event is shown as sold out and attendees cannot reserve more seats."
+          "When an organiser or admin cancels an event, all confirmed bookings for that event are automatically marked as cancelled."
+      },
+      {
+        question: "Can I still see events that are sold out?",
+        answer:
+          "Yes. Sold-out events remain visible on the platform so you can save the date for future editions, but the booking button will be disabled."
+      }
+    ]
+  },
+  {
+    title: "Payments",
+    items: [
+      {
+        question: "What payment methods are accepted?",
+        answer:
+          "PulsePass currently runs in demo mode — no real payment is processed. Bookings are confirmed instantly without any charge."
+      },
+      {
+        question: "Are ticket prices shown in Euro?",
+        answer:
+          "Yes. All prices are displayed in Euro (EUR) inclusive of any fees."
+      },
+      {
+        question: "Will I receive a booking confirmation?",
+        answer:
+          "Your confirmed bookings appear immediately in your attendee dashboard with a unique booking reference code."
       }
     ]
   }
@@ -76,22 +111,25 @@ export default function FAQPage() {
       <div className="dashboard-hero">
         <div>
           <p className="eyebrow">Help centre</p>
-          <h1>Answers for booking seats, managing events, and using demo accounts.</h1>
+          <h1>Frequently asked questions about booking, accounts, and events.</h1>
           <p>
-            A quick reference for the core PulsePass workflows: attendees book, organisers manage events, and admins keep
-            the platform coordinated.
+            Everything you need to know about using PulsePass — from creating an account to managing
+            your bookings.
           </p>
         </div>
       </div>
 
       <div className="faq-layout">
         <aside className="glass-panel stack-md faq-aside">
-          <p className="eyebrow">Quick start</p>
-          <h2>Need to test the app?</h2>
-          <p>Run the seed script, log in with a demo account, and open the dashboard for that role.</p>
+          <p className="eyebrow">Still need help?</p>
+          <h2>Can&rsquo;t find what you&rsquo;re looking for?</h2>
+          <p>
+            Browse upcoming events or send us a message through the contact page and we will get back
+            to you as soon as possible.
+          </p>
           <div className="row gap-sm wrap">
-            <Link className={buttonClassName("primary", "sm")} href="/login">
-              Log In
+            <Link className={buttonClassName("primary", "sm")} href="/contact">
+              Contact Us
             </Link>
             <Link className={buttonClassName("secondary", "sm")} href="/#events">
               Browse Events

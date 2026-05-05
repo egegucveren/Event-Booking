@@ -63,7 +63,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             </div>
 
             <div>
-              <span className="detail-meta__label">Seats left</span>
+              <span className="detail-meta__label">Seats left: </span>
               <strong>{event.remainingSeats}</strong>
             </div>
           </div>

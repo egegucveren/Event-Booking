@@ -1,5 +1,7 @@
 "use server";
 
+// Server actions for authentication: register, login, and logout.
+// All input is validated with Zod before any database operation.
 import { redirect } from "next/navigation";
 
 import { createSession, destroySession, getRoleHome, getUserByEmail, hashPassword, toSessionUser, verifyPassword } from "@/lib/auth";

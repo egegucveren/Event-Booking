@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { SectionHeading } from "@/components/layout/section-heading";
 import { buttonClassName } from "@/components/ui/button";
+import { CustomSelect } from "@/components/ui/custom-select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EventCard } from "@/components/ui/event-card";
 import { formatCurrencyFromCents } from "@/lib/format";
@@ -148,27 +149,13 @@ const filteredEvents = events.filter((event) => {
 <div className="market-inline-filters" id="events">
   <input
     className="input"
+    onChange={(event) => setSearchQuery(event.target.value)}
     placeholder="Search by title, city, or category..."
     type="text"
     value={searchQuery}
-    onChange={(event) => setSearchQuery(event.target.value)}
   />
-
-  <select className="input" value={selectedCity} onChange={(event) => setSelectedCity(event.target.value)}>
-    {cityOptions.map((city) => (
-      <option key={city} value={city}>
-        {city}
-      </option>
-    ))}
-  </select>
-
-  <select className="input" value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
-    {categoryOptions.map((category) => (
-      <option key={category} value={category}>
-        {category}
-      </option>
-    ))}
-  </select>
+  <CustomSelect options={cityOptions} value={selectedCity} onChange={setSelectedCity} />
+  <CustomSelect options={categoryOptions} value={selectedCategory} onChange={setSelectedCategory} />
 </div>
 
           <div className="market-listing-header">

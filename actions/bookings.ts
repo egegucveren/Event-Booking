@@ -1,5 +1,8 @@
 "use server";
 
+// Server actions for bookings: create and cancel.
+// Booking creation uses a database transaction with SELECT FOR UPDATE to prevent
+// race conditions when multiple users attempt to book the same event simultaneously.
 import { randomBytes } from "node:crypto";
 
 import type { RowDataPacket } from "mysql2";

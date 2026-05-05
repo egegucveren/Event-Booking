@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 
+import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { CookieConsent } from "@/components/ui/cookie-consent";
 import { getSessionUser } from "@/lib/auth";
 
 import "./globals.css";
@@ -37,6 +39,8 @@ export default async function RootLayout({
         <div className="page-background" />
         <SiteHeader user={user} />
         <main className="page-shell">{children}</main>
+        <SiteFooter />
+        <CookieConsent />
       </body>
     </html>
   );

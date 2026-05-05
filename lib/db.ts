@@ -1,3 +1,5 @@
+// Database module: creates a shared MySQL connection pool and exposes helpers
+// for running queries, executing write statements, and handling transactions.
 import mysql, { type PoolConnection, type ResultSetHeader } from "mysql2/promise";
 
 declare global {
@@ -5,6 +7,7 @@ declare global {
   var __pulsepassPool: ReturnType<typeof mysql.createPool> | undefined;
 }
 
+// Throws a clear error at startup if a required environment variable is missing.
 function requireEnv(name: string) {
   const value = process.env[name];
   if (!value) {
@@ -31,16 +34,19 @@ if (process.env.NODE_ENV !== "production") {
   global.__pulsepassPool = pool;
 }
 
+// Runs a SELECT query and returns the result rows typed as T.
 export async function query<T>(sql: string, values: any[] = []) {
   const [rows] = await pool.query(sql, values);
   return rows as T;
 }
 
+// Runs an INSERT, UPDATE or DELETE statement and returns the result header.
 export async function execute(sql: string, values: any[] = []) {
   const [result] = await pool.execute<ResultSetHeader>(sql, values);
   return result;
 }
 
+// Wraps multiple queries in a single transaction. Rolls back automatically on error.
 export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
   const conn = await pool.getConnection();
   try {

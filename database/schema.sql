@@ -58,7 +58,17 @@ CREATE TABLE IF NOT EXISTS bookings (
     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS contact_tickets (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(190) NOT NULL,
+  message TEXT NOT NULL,
+  status ENUM('open', 'resolved') NOT NULL DEFAULT 'open',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX idx_sessions_token ON sessions (token_hash);
 CREATE INDEX idx_events_start ON events (starts_at);
 CREATE INDEX idx_bookings_event_status ON bookings (event_id, status);
 CREATE INDEX idx_bookings_attendee_status ON bookings (attendee_id, status);
+CREATE INDEX idx_tickets_status ON contact_tickets (status, created_at);

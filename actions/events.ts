@@ -1,5 +1,7 @@
 "use server";
 
+// Server actions for event management: create, update, and delete.
+// All actions verify the user is an organiser and validate input before touching the database.
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

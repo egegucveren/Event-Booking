@@ -94,6 +94,16 @@ export const bookingCancelSchema = z.object({
   bookingId: requiredNumber("Booking").pipe(z.number().int().positive())
 });
 
+export const contactSchema = z.object({
+  name: z.string().trim().min(2, "Full name is required.").max(120, "Name is too long."),
+  email: z.string().trim().email("Enter a valid email address."),
+  message: z.string().trim().min(10, "Message must be at least 10 characters.").max(2000, "Message is too long.")
+});
+
+export const ticketResolveSchema = z.object({
+  ticketId: requiredNumber("Ticket").pipe(z.number().int().positive())
+});
+
 export function validationErrorState(error: ZodError): FormState {
   return {
     status: "error",

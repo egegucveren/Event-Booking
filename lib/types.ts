@@ -80,3 +80,12 @@ export type FormState = {
   message?: string;
   fieldErrors?: Record<string, string[] | undefined>;
 };
+
+export type ContactTicket = {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  status: "open" | "resolved";
+  createdAt: string;
+};

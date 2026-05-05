@@ -24,6 +24,8 @@ export function SiteHeader({ user }: SiteHeaderProps) {
         <nav className="site-nav">
           <Link href="/">Home</Link>
           <Link href="/#events">Events</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
           <Link href="/faq">FAQ</Link>
           {user?.role === "organiser" ? <Link href="/organiser">Organiser</Link> : null}
           {user?.role === "attendee" ? <Link href="/attendee">Attendee</Link> : null}

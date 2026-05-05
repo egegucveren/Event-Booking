@@ -2,7 +2,7 @@ import type { RowDataPacket } from "mysql2";
 
 import { query } from "@/lib/db";
 import { getEventVisual } from "@/lib/event-visuals";
-import type { BookingRecord, DashboardStats, EditableEvent, EventCardData, Role } from "@/lib/types";
+import type { BookingRecord, ContactTicket, DashboardStats, EditableEvent, EventCardData, Role } from "@/lib/types";
 
 type EventRow = RowDataPacket & {
   id: number;
@@ -385,7 +385,39 @@ export async function getAdminUsers() {
   }));
 }
 
-export async function getAdminRecentEvents(limit = 8) {
+export async function getOpenContactTickets(): Promise<ContactTicket[]> {
+  type TicketRow = RowDataPacket & {
+    id: number;
+    name: string;
+    email: string;
+    message: string;
+    status: "open" | "resolved";
+    createdAt: string;
+  };
+
+  try {
+    const rows = await query<TicketRow[]>(
+      `SELECT id, name, email, message, status, created_at AS createdAt
+       FROM contact_tickets
+       ORDER BY FIELD(status, 'open', 'resolved'), created_at DESC`
+    );
+
+    return rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      message: row.message,
+      status: row.status,
+      createdAt: row.createdAt
+    }));
+  } catch {
+    // Table does not exist yet — return empty until migration is run.
+    return [];
+  }
+}
+
+// Returns all events ordered by creation date for the admin event management panel.
+export async function getAdminRecentEvents() {
   const rows = await query<AdminEventRow[]>(
     `
       SELECT
@@ -401,9 +433,7 @@ export async function getAdminRecentEvents(limit = 8) {
       LEFT JOIN bookings b ON b.event_id = e.id
       GROUP BY e.id
       ORDER BY e.created_at DESC
-      LIMIT ?
-    `,
-    [limit]
+    `
   );
 
   return rows.map((row) => ({
