@@ -51,6 +51,19 @@ const visualsByTitle: Record<string, VisualLookup> = {
       showcase: "cover",
       detail: "cover"
     }
+  },
+  "limerick-food-trail": {
+    imagePath: "/event-backgrounds/limerick-food-trail.png",
+    imagePosition: {
+      compact: "center 56%",
+      showcase: "center 54%",
+      detail: "center 52%"
+    },
+    imageSize: {
+      compact: "cover",
+      showcase: "cover",
+      detail: "cover"
+    }
   }
 };
 

@@ -2136,7 +2136,6 @@ button {
   align-items: flex-end;
   padding: 2.5rem;
   margin-bottom: 1.25rem;
-  border: 1px solid rgba(148, 163, 184, 0.22);
 }
 
 .event-detail-hero__content {
@@ -2168,7 +2167,8 @@ button {
 }
 
 .event-booking-card strong {
-  font-size: 2.2rem;
+  font-size: 1.2rem;
+  margin-left: 0.5rem;
 }
 
 @media (max-width: 900px) {

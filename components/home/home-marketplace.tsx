@@ -37,14 +37,14 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
     )
   ];
 
-const filteredEvents = events.filter((event) => {
-  const searchText = `${event.title} ${event.city} ${event.category} ${event.excerpt}`.toLowerCase();
-  const searchMatch = searchText.includes(searchQuery.toLowerCase());
-  const categoryMatch = selectedCategory === "All experiences" || event.category === selectedCategory;
-  const cityMatch = selectedCity === "All cities" || event.city === selectedCity;
+  const filteredEvents = events.filter((event) => {
+    const searchText = `${event.title} ${event.city} ${event.category} ${event.excerpt}`.toLowerCase();
+    const searchMatch = searchText.includes(searchQuery.toLowerCase());
+    const categoryMatch = selectedCategory === "All experiences" || event.category === selectedCategory;
+    const cityMatch = selectedCity === "All cities" || event.city === selectedCity;
 
-  return searchMatch && categoryMatch && cityMatch;
-});
+    return searchMatch && categoryMatch && cityMatch;
+  });
   const categoryFilteredEvents = events.filter(
     (event) => selectedCategory === "All experiences" || event.category === selectedCategory
   );
@@ -127,7 +127,6 @@ const filteredEvents = events.filter((event) => {
         </div>
       </section>
 
-
       <section className="market-layout">
         <div className="market-content">
           <div className="market-spotlight">
@@ -145,18 +144,17 @@ const filteredEvents = events.filter((event) => {
             </Link>
           </div>
 
-
-<div className="market-inline-filters" id="events">
-  <input
-    className="input"
-    onChange={(event) => setSearchQuery(event.target.value)}
-    placeholder="Search by title, city, or category..."
-    type="text"
-    value={searchQuery}
-  />
-  <CustomSelect options={cityOptions} value={selectedCity} onChange={setSelectedCity} />
-  <CustomSelect options={categoryOptions} value={selectedCategory} onChange={setSelectedCategory} />
-</div>
+          <div className="market-inline-filters" id="events">
+            <input
+              className="input"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search by title, city, or category..."
+              type="text"
+              value={searchQuery}
+            />
+            <CustomSelect options={cityOptions} value={selectedCity} onChange={setSelectedCity} />
+            <CustomSelect options={categoryOptions} value={selectedCategory} onChange={setSelectedCategory} />
+          </div>
 
           <div className="market-listing-header">
             <SectionHeading
@@ -182,7 +180,6 @@ const filteredEvents = events.filter((event) => {
           )}
         </div>
       </section>
-
     </div>
   );
 }
