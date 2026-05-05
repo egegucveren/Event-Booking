@@ -2049,6 +2049,7 @@ button {
 
   .category-shell,
   .category-panel--headline,
+  .ecard-layout,
   .event-card--showcase,
   .market-hero__intro,
   .market-promo-strip,
@@ -2072,10 +2073,15 @@ button {
     position: static;
   }
 
+  .ecard-panel {
+    position: static;
+  }
+
   .dashboard-hero,
   .manage-card__header,
   .manage-card__footer,
   .booking-card__header,
+  .ecard-ticket,
   .activity-card,
   .market-spotlight {
     align-items: flex-start;
@@ -2148,6 +2154,11 @@ button {
   }
 
   .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ecard-ticket,
+  .ecard-visual__meta {
     grid-template-columns: 1fr;
   }
 
@@ -2757,6 +2768,148 @@ select.input option {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* E-ticket card page */
+.ecard-hero {
+  align-items: center;
+}
+
+.ecard-layout {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 360px minmax(0, 1fr);
+}
+
+.ecard-panel,
+.ecard-visual,
+.ecard-ticket {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+    rgba(9, 21, 35, 0.92);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.ecard-panel {
+  align-self: start;
+  position: sticky;
+  top: 92px;
+}
+
+.ecard-purpose-list {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ecard-purpose-list li {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  color: #dfe8f3;
+  line-height: 1.5;
+  padding: 14px 16px;
+}
+
+.ecard-purpose-list li::before {
+  color: var(--success);
+  content: "✓";
+  font-weight: 800;
+  margin-right: 10px;
+}
+
+.ecard-visual {
+  background:
+    radial-gradient(circle at top right, rgba(86, 180, 216, 0.24), transparent 32%),
+    linear-gradient(135deg, rgba(200, 115, 74, 0.24), rgba(9, 21, 35, 0.95));
+  display: grid;
+  gap: 20px;
+  min-height: 260px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ecard-visual::after {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  content: "";
+  height: 180px;
+  position: absolute;
+  right: -54px;
+  top: -54px;
+  width: 180px;
+}
+
+.ecard-visual h2 {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  margin: 4px 0;
+}
+
+.ecard-visual p {
+  color: rgba(246, 248, 251, 0.74);
+  margin: 0;
+}
+
+.ecard-visual__number {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-top: auto;
+  overflow-wrap: anywhere;
+}
+
+.ecard-visual__meta,
+.ecard-ticket__main {
+  display: grid;
+  gap: 12px;
+}
+
+.ecard-visual__meta {
+  color: rgba(246, 248, 251, 0.72);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ecard-ticket-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.ecard-ticket {
+  align-items: center;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 148px;
+}
+
+.ticket-qr {
+  align-items: center;
+  background: #fff;
+  border-radius: 18px;
+  color: #07111d;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  margin: 0;
+  padding: 12px;
+}
+
+.ticket-qr svg {
+  display: block;
+  height: 112px;
+  width: 112px;
+}
+
+.ticket-qr figcaption {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 /* ── Activity card — prevent long titles from overflowing */

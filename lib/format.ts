@@ -28,6 +28,18 @@ export function formatEventDate(value: string | Date) {
   return `${formatShortDate(date)}, ${formatTime(date)}`;
 }
 
+export function formatFullDateTime(value: string | Date) {
+  const date = parseSqlDateTime(value);
+  return new Intl.DateTimeFormat("en-IE", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+}
+
 export function formatDateRange(start: string | Date, end: string | Date) {
   const startDate = parseSqlDateTime(start);
   const endDate = parseSqlDateTime(end);

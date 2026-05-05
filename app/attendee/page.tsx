@@ -1,4 +1,5 @@
 import { cancelBookingAction } from "@/actions/bookings";
+import Link from "next/link";
 import { EventCard } from "@/components/ui/event-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { NoticeBanner } from "@/components/ui/notice-banner";
@@ -7,7 +8,7 @@ import { requireRole } from "@/lib/auth";
 import { buttonClassName } from "@/components/ui/button";
 import { formatCurrencyFromCents, formatEventDate } from "@/lib/format";
 import { getNotice } from "@/lib/notices";
-import { getAttendeeBookings, getAttendeeStats, getFeaturedEvents } from "@/lib/queries";
+import { getAttendeeBookings, getAttendeeETicketCard, getAttendeeStats, getFeaturedEvents } from "@/lib/queries";
 
 type AttendeePageProps = {
   searchParams?: Promise<{
@@ -17,8 +18,9 @@ type AttendeePageProps = {
 
 export default async function AttendeePage({ searchParams }: AttendeePageProps) {
   const attendee = await requireRole("attendee");
-  const [bookings, stats, suggestions] = await Promise.all([
+  const [bookings, card, stats, suggestions] = await Promise.all([
     getAttendeeBookings(attendee.id),
+    getAttendeeETicketCard(attendee.id),
     getAttendeeStats(attendee.id),
     getFeaturedEvents(3)
   ]);
@@ -53,6 +55,21 @@ export default async function AttendeePage({ searchParams }: AttendeePageProps) 
           <strong>{formatCurrencyFromCents(stats.spendCents)}</strong>
           <span>Total spend</span>
         </div>
+      </div>
+
+      <div className="activity-card">
+        <div>
+          <p className="eyebrow">E-ticket card</p>
+          <h3>{card?.isValid ? "Your yearly card is active" : "A valid card is required for new bookings"}</h3>
+          <p>
+            {card?.isValid
+              ? `Card ${card.cardNumber} is ready for QR ticket entry.`
+              : "Get or renew your card so new tickets can be assigned to it."}
+          </p>
+        </div>
+        <Link className={buttonClassName(card?.isValid ? "secondary" : "primary", "sm")} href="/e-ticket">
+          Manage Card
+        </Link>
       </div>
 
       <div className="stack-lg">

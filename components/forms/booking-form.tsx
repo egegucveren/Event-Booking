@@ -48,7 +48,16 @@ export function BookingForm({ eventId }: BookingFormProps) {
         </div>
       ) : null}
 
-      {state.message ? <p className="form-message form-message--error">{state.message}</p> : null}
+      {state.message ? (
+        <p className="form-message form-message--error">
+          {state.message}{" "}
+          {state.message.includes("e-ticket card") ? (
+            <Link href="/e-ticket" className="over-limit-hint__link">
+              Open card page
+            </Link>
+          ) : null}
+        </p>
+      ) : null}
 
       <SubmitButton disabled={overLimit} label="Confirm Booking" pendingLabel="Confirming..." />
     </form>

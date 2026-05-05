@@ -36,6 +36,7 @@ async function main() {
   await connection.query(`CREATE DATABASE \`${database}\`; USE \`${database}\`; ${schema}`);
 
   await connection.query("DELETE FROM bookings");
+  await connection.query("DELETE FROM e_ticket_cards");
   await connection.query("DELETE FROM sessions");
   await connection.query("DELETE FROM events");
   await connection.query("DELETE FROM users");
@@ -63,6 +64,26 @@ async function main() {
   const noahId = Number(userResult.insertId) + 4;
   const sofiaId = Number(userResult.insertId) + 5;
   const ethanId = Number(userResult.insertId) + 6;
+
+  const [cardResult] = await connection.execute(
+    `
+      INSERT INTO e_ticket_cards (user_id, card_number, status, issued_at, expires_at)
+      VALUES
+        (?, 'PPCARD0000000001', 'active', NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR)),
+        (?, 'PPCARD0000000002', 'active', NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR)),
+        (?, 'PPCARD0000000003', 'active', NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR)),
+        (?, 'PPCARD0000000004', 'active', NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR)),
+        (?, 'PPCARD0000000005', 'active', NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR)),
+        (?, 'PPCARD0000000006', 'active', NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR))
+    `,
+    [attendeeId, avaId, noahId, sofiaId, ethanId, organiserId]
+  );
+
+  const attendeeCardId = Number(cardResult.insertId);
+  const avaCardId = attendeeCardId + 1;
+  const noahCardId = attendeeCardId + 2;
+  const sofiaCardId = attendeeCardId + 3;
+  const ethanCardId = attendeeCardId + 4;
 
   const [eventResult] = await connection.execute(
     `
@@ -94,46 +115,58 @@ async function main() {
 
   await connection.execute(
     `
-      INSERT INTO bookings (code, event_id, attendee_id, seats, total_cents, status)
+      INSERT INTO bookings (code, event_id, attendee_id, e_ticket_card_id, seats, total_cents, status)
       VALUES
-        ('PP-7K4Q9X', ?, ?, 12, 54000, 'confirmed'),
-        ('PP-9D3M2A', ?, ?, 8, 36000, 'confirmed'),
-        ('PP-5P8T1N', ?, ?, 6, 27000, 'confirmed'),
-        ('PP-2M8R1L', ?, ?, 10, 89000, 'confirmed'),
-        ('PP-4C6V7B', ?, ?, 7, 62300, 'confirmed'),
-        ('PP-8R2L5S', ?, ?, 5, 44500, 'confirmed'),
-        ('PP-6H1W9Q', ?, ?, 9, 28800, 'confirmed'),
-        ('PP-3N7K5D', ?, ?, 4, 12800, 'confirmed'),
-        ('PP-1F8D4J', ?, ?, 11, 57200, 'confirmed'),
-        ('PP-9L2P6C', ?, ?, 6, 31200, 'confirmed'),
-        ('PP-5T4X8A', ?, ?, 14, 106400, 'confirmed'),
-        ('PP-7V1N3M', ?, ?, 8, 60800, 'confirmed')
+        ('PP-7K4Q9X', ?, ?, ?, 12, 54000, 'confirmed'),
+        ('PP-9D3M2A', ?, ?, ?, 8, 36000, 'confirmed'),
+        ('PP-5P8T1N', ?, ?, ?, 6, 27000, 'confirmed'),
+        ('PP-2M8R1L', ?, ?, ?, 10, 89000, 'confirmed'),
+        ('PP-4C6V7B', ?, ?, ?, 7, 62300, 'confirmed'),
+        ('PP-8R2L5S', ?, ?, ?, 5, 44500, 'confirmed'),
+        ('PP-6H1W9Q', ?, ?, ?, 9, 28800, 'confirmed'),
+        ('PP-3N7K5D', ?, ?, ?, 4, 12800, 'confirmed'),
+        ('PP-1F8D4J', ?, ?, ?, 11, 57200, 'confirmed'),
+        ('PP-9L2P6C', ?, ?, ?, 6, 31200, 'confirmed'),
+        ('PP-5T4X8A', ?, ?, ?, 14, 106400, 'confirmed'),
+        ('PP-7V1N3M', ?, ?, ?, 8, 60800, 'confirmed')
     `,
     [
       firstEventId,
       attendeeId,
+      attendeeCardId,
       firstEventId,
       avaId,
+      avaCardId,
       firstEventId,
       noahId,
+      noahCardId,
       firstEventId + 1,
       attendeeId,
+      attendeeCardId,
       firstEventId + 1,
       sofiaId,
+      sofiaCardId,
       firstEventId + 1,
       ethanId,
+      ethanCardId,
       firstEventId + 2,
       avaId,
+      avaCardId,
       firstEventId + 2,
       sofiaId,
+      sofiaCardId,
       firstEventId + 3,
       attendeeId,
+      attendeeCardId,
       firstEventId + 3,
       ethanId,
+      ethanCardId,
       firstEventId + 4,
       noahId,
+      noahCardId,
       firstEventId + 4,
-      sofiaId
+      sofiaId,
+      sofiaCardId
     ]
   );
 

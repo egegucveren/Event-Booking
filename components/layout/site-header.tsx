@@ -28,6 +28,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/faq">FAQ</Link>
+          {user?.role === "attendee" ? <Link href="/e-ticket">E-Ticket Card</Link> : null}
           {user?.role === "organiser" ? <Link href="/organiser">Organiser</Link> : null}
           {user?.role === "attendee" ? <Link href="/attendee">Attendee</Link> : null}
           {user?.role === "admin" ? <Link href="/admin">Admin</Link> : null}

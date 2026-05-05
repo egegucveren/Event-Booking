@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth";
 import { execute, query, withTransaction } from "@/lib/db";
-import { getEventById } from "@/lib/queries";
+import { getActiveETicketCard, getEventById } from "@/lib/queries";
 import { bookingCancelSchema, bookingSchema, idleFormState, validationErrorState } from "@/lib/validation";
 
 function createBookingCode() {
@@ -43,6 +43,14 @@ export async function createBookingAction(_: typeof idleFormState, formData: For
     return {
       status: "error" as const,
       message: "This event is no longer accepting bookings."
+    };
+  }
+
+  const card = await getActiveETicketCard(attendee.id);
+  if (!card) {
+    return {
+      status: "error" as const,
+      message: "You need an active e-ticket card before confirming a booking. Open E-Ticket Card to get or renew your card."
     };
   }
 
@@ -91,8 +99,8 @@ export async function createBookingAction(_: typeof idleFormState, formData: For
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
         await conn.execute(
-          `INSERT INTO bookings (code, event_id, attendee_id, seats, total_cents, status) VALUES (?, ?, ?, ?, ?, 'confirmed')`,
-          [createBookingCode(), event.id, attendee.id, parsed.data.seats, event.priceCents * parsed.data.seats]
+          `INSERT INTO bookings (code, event_id, attendee_id, e_ticket_card_id, seats, total_cents, status) VALUES (?, ?, ?, ?, ?, ?, 'confirmed')`,
+          [createBookingCode(), event.id, attendee.id, card.id, parsed.data.seats, event.priceCents * parsed.data.seats]
         );
         break;
       } catch (err: any) {
@@ -109,6 +117,7 @@ export async function createBookingAction(_: typeof idleFormState, formData: For
 
   revalidatePath(`/events/${event.id}`);
   revalidatePath("/attendee");
+  revalidatePath("/e-ticket");
   redirect("/attendee?notice=booking-created");
 }
 
@@ -139,6 +148,7 @@ export async function cancelBookingAction(formData: FormData) {
 
   revalidatePath(`/events/${booking.event_id}`);
   revalidatePath("/attendee");
+  revalidatePath("/e-ticket");
   revalidatePath("/");
   redirect("/attendee?notice=booking-cancelled");
 }

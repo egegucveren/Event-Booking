@@ -2,7 +2,7 @@ import type { RowDataPacket } from "mysql2";
 
 import { query } from "@/lib/db";
 import { getEventVisual } from "@/lib/event-visuals";
-import type { BookingRecord, ContactTicket, DashboardStats, EditableEvent, EventCardData, Role } from "@/lib/types";
+import type { BookingRecord, ContactTicket, DashboardStats, ETicketCard, EditableEvent, EventCardData, Role } from "@/lib/types";
 
 type EventRow = RowDataPacket & {
   id: number;
@@ -77,6 +77,15 @@ type BookingRow = RowDataPacket & {
   seats: number;
   totalCents: number;
   status: "confirmed" | "cancelled";
+};
+
+type ETicketCardRow = RowDataPacket & {
+  id: number;
+  cardNumber: string;
+  status: "active" | "expired";
+  issuedAt: string;
+  expiresAt: string;
+  isValid: number;
 };
 
 type AdminUserRow = RowDataPacket & {
@@ -547,6 +556,96 @@ export async function getAttendeeStats(attendeeId: number) {
     reservedSeats: Number(row?.seatsSold ?? 0),
     spendCents: Number(row?.revenueCents ?? 0)
   };
+}
+
+export async function getActiveETicketCard(attendeeId: number) {
+  const rows = await query<Array<{ id: number }>>(
+    `
+      SELECT id
+      FROM e_ticket_cards
+      WHERE user_id = ?
+        AND status = 'active'
+        AND expires_at > NOW()
+      ORDER BY expires_at DESC
+      LIMIT 1
+    `,
+    [attendeeId]
+  );
+
+  return rows[0] ?? null;
+}
+
+export async function getAttendeeETicketCard(attendeeId: number): Promise<ETicketCard | null> {
+  const rows = await query<ETicketCardRow[]>(
+    `
+      SELECT
+        id,
+        card_number AS cardNumber,
+        CASE WHEN status = 'active' AND expires_at > NOW() THEN 'active' ELSE 'expired' END AS status,
+        issued_at AS issuedAt,
+        expires_at AS expiresAt,
+        CASE WHEN status = 'active' AND expires_at > NOW() THEN 1 ELSE 0 END AS isValid
+      FROM e_ticket_cards
+      WHERE user_id = ?
+      ORDER BY expires_at DESC, id DESC
+      LIMIT 1
+    `,
+    [attendeeId]
+  );
+
+  const row = rows[0];
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    cardNumber: row.cardNumber,
+    status: row.status,
+    issuedAt: row.issuedAt,
+    expiresAt: row.expiresAt,
+    isValid: Number(row.isValid) === 1
+  };
+}
+
+export async function getETicketCardBookings(attendeeId: number, cardId: number) {
+  const rows = await query<BookingRow[]>(
+    `
+      SELECT
+        b.id,
+        b.code,
+        e.id AS eventId,
+        e.title AS eventTitle,
+        e.city,
+        e.venue,
+        e.starts_at AS startsAt,
+        b.seats,
+        b.total_cents AS totalCents,
+        b.status
+      FROM bookings b
+      INNER JOIN events e ON e.id = b.event_id
+      WHERE b.attendee_id = ?
+        AND b.e_ticket_card_id = ?
+      ORDER BY e.starts_at ASC
+    `,
+    [attendeeId, cardId]
+  );
+
+  return rows.map(
+    (row) =>
+      ({
+        id: row.id,
+        code: row.code,
+        eventId: row.eventId,
+        eventTitle: row.eventTitle,
+        city: row.city,
+        venue: row.venue,
+        startsAt: row.startsAt,
+        seats: row.seats,
+        totalCents: row.totalCents,
+        status: row.status
+      }) satisfies BookingRecord
+  );
 }
 
 export async function getAdminUsers() {

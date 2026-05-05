@@ -69,6 +69,15 @@ export type BookingRecord = {
   status: BookingStatus;
 };
 
+export type ETicketCard = {
+  id: number;
+  cardNumber: string;
+  status: "active" | "expired";
+  issuedAt: string;
+  expiresAt: string;
+  isValid: boolean;
+};
+
 export type DashboardStats = {
   totalEvents: number;
   totalBookings: number;
