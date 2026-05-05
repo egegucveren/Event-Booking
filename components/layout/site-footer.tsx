@@ -13,6 +13,7 @@ export function SiteFooter() {
         <nav className="site-footer__nav">
           <Link href="/">Home</Link>
           <Link href="/#events">Events</Link>
+          <Link href="/spotlight">Spotlight</Link>
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/faq">FAQ</Link>

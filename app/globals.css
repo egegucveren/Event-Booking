@@ -1246,6 +1246,200 @@ button {
   padding: 16px 20px 20px;
 }
 
+.spotlight-hero {
+  background-position: var(--spotlight-image-position, center);
+  background-size: var(--spotlight-image-size, cover);
+  border: 1px solid rgba(130, 151, 173, 0.22);
+  border-radius: 34px;
+  box-shadow: var(--shadow-soft);
+  display: grid;
+  gap: 32px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
+  min-height: 560px;
+  overflow: hidden;
+  padding: 46px;
+  position: relative;
+}
+
+.spotlight-hero::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 36%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.spotlight-hero__content,
+.spotlight-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.spotlight-hero__content {
+  align-self: end;
+  max-width: 760px;
+}
+
+.spotlight-hero__content h1 {
+  color: #fff;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(3rem, 8vw, 6.8rem);
+  line-height: 0.94;
+  margin: 18px 0;
+}
+
+.spotlight-hero__content p {
+  color: rgba(236, 242, 248, 0.86);
+  font-size: 1.08rem;
+  line-height: 1.75;
+  margin: 0;
+  max-width: 680px;
+}
+
+.spotlight-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.spotlight-panel {
+  align-self: end;
+  background: rgba(7, 18, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 26px;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.28);
+  padding: 26px;
+}
+
+.spotlight-panel > strong {
+  color: #fff;
+  display: block;
+  font-family: var(--font-display), sans-serif;
+  font-size: 2.7rem;
+  line-height: 1;
+  margin-top: 6px;
+}
+
+.spotlight-panel__meta {
+  color: rgba(236, 242, 248, 0.78);
+  display: grid;
+  gap: 8px;
+  margin: 22px 0;
+}
+
+.spotlight-progress {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.spotlight-progress-label {
+  align-items: center;
+  color: rgba(236, 242, 248, 0.72);
+  display: flex;
+  font-size: 0.88rem;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.spotlight-progress-label strong {
+  color: #fff;
+  font-weight: 900;
+}
+
+.spotlight-progress span {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  min-width: 8px;
+}
+
+.spotlight-panel p {
+  color: rgba(236, 242, 248, 0.76);
+  margin: 14px 0 0;
+}
+
+.spotlight-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
+}
+
+.spotlight-grid h2 {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.spotlight-stats {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.spotlight-stats div,
+.spotlight-mini-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(130, 151, 173, 0.18);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.spotlight-stats strong {
+  color: var(--text);
+  display: block;
+  font-family: var(--font-display), sans-serif;
+  font-size: 2rem;
+}
+
+.spotlight-stats span {
+  color: var(--muted);
+}
+
+.spotlight-recommendations {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.spotlight-mini-card {
+  color: inherit;
+  display: grid;
+  gap: 10px;
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.spotlight-mini-card:hover {
+  border-color: rgba(255, 139, 61, 0.5);
+  transform: translateY(-2px);
+}
+
+.spotlight-mini-card span {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.spotlight-mini-card strong {
+  color: var(--text);
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.18rem;
+  line-height: 1.15;
+}
+
+.spotlight-mini-card small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .activity-card__meta {
   align-items: flex-end;
   color: var(--muted);
@@ -1834,12 +2028,23 @@ button {
   .detail-grid,
   .auth-layout,
   .admin-layout,
-  .faq-layout {
+  .faq-layout,
+  .spotlight-hero,
+  .spotlight-grid {
     grid-template-columns: 1fr;
   }
 
   .faq-aside {
     position: static;
+  }
+
+  .spotlight-hero {
+    min-height: auto;
+    padding: 34px;
+  }
+
+  .spotlight-panel {
+    align-self: stretch;
   }
 
   .category-shell,
@@ -1857,6 +2062,8 @@ button {
   .manage-grid,
   .booking-grid,
   .metric-grid--dashboard,
+  .spotlight-recommendations,
+  .spotlight-stats,
   .grid-two {
     grid-template-columns: 1fr;
   }

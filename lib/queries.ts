@@ -305,6 +305,48 @@ export async function getFeaturedEvents(limit = 6) {
   }
 }
 
+export async function getSpotlightEvent() {
+  try {
+    const rows = await query<EventRow[]>(
+      `
+        SELECT
+          e.id,
+          e.title,
+          e.category,
+          e.venue,
+          e.city,
+          e.starts_at AS startsAt,
+          e.ends_at AS endsAt,
+          e.price_cents AS priceCents,
+          e.capacity,
+          e.excerpt,
+          e.description,
+          e.status,
+          u.name AS organiserName,
+          COALESCE(SUM(CASE WHEN b.status = 'confirmed' THEN b.seats ELSE 0 END), 0) AS bookedSeats
+        FROM events e
+        INNER JOIN users u ON u.id = e.organiser_id
+        LEFT JOIN bookings b ON b.event_id = e.id
+        WHERE e.starts_at >= NOW()
+          AND e.status = 'scheduled'
+        GROUP BY e.id
+        ORDER BY
+          CASE WHEN DATE(e.starts_at) = CURDATE() THEN 0 ELSE 1 END,
+          e.starts_at ASC
+        LIMIT 1
+      `
+    );
+
+    return rows[0] ? mapEvent(rows[0]) : null;
+  } catch (error) {
+    if (isDbConnectionError(error)) {
+      return fallbackEventRows[0] ? mapEvent(fallbackEventRows[0]) : null;
+    }
+
+    throw error;
+  }
+}
+
 export async function getEventById(eventId: number) {
   try {
     const rows = await query<EventRow[]>(
