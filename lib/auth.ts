@@ -37,6 +37,7 @@ export async function verifyPassword(password: string, storedHash: string) {
   const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
   const savedBuffer = Buffer.from(savedKey, "hex");
 
+  // timingSafeEqual throws if the two buffers differ in length, so this check must come first.
   if (savedBuffer.length !== derivedKey.length) {
     return false;
   }

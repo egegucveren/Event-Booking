@@ -7,15 +7,7 @@ declare global {
   var __pulsepassPool: ReturnType<typeof mysql.createPool> | undefined;
 }
 
-// Throws a clear error at startup if a required environment variable is missing.
-function requireEnv(name: string) {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-  return value;
-}
-
+// The pool is attached to global so it survives Next.js hot module reloads in development.
 const pool =
   global.__pulsepassPool ??
   mysql.createPool({

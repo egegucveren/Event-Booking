@@ -705,9 +705,13 @@ export async function getOpenContactTickets(): Promise<ContactTicket[]> {
       status: row.status,
       createdAt: row.createdAt
     }));
-  } catch {
-    // Table does not exist yet — return empty until migration is run.
-    return [];
+  } catch (error) {
+    const code = error instanceof Error && "code" in error ? String((error as any).code) : "";
+    // Return empty only for a missing table or a lost connection; re-throw everything else.
+    if (code === "ER_NO_SUCH_TABLE" || isDbConnectionError(error)) {
+      return [];
+    }
+    throw error;
   }
 }
 

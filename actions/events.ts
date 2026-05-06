@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth";
-import { execute, query } from "@/lib/db";
+import { execute, query, withTransaction } from "@/lib/db";
 import { toSqlDateTime } from "@/lib/format";
 import { eventDeleteSchema, eventSchema, idleFormState, validationErrorState } from "@/lib/validation";
 
@@ -111,47 +111,51 @@ export async function updateEventAction(_: typeof idleFormState, formData: FormD
     };
   }
 
-  await execute(
-    `
-      UPDATE events
-      SET
-        title = ?,
-        category = ?,
-        venue = ?,
-        city = ?,
-        starts_at = ?,
-        ends_at = ?,
-        price_cents = ?,
-        capacity = ?,
-        excerpt = ?,
-        description = ?,
-        status = ?
-      WHERE id = ? AND organiser_id = ?
-    `,
-    [
-      parsed.data.title,
-      parsed.data.category,
-      parsed.data.venue,
-      parsed.data.city,
-      toSqlDateTime(parsed.data.startsAt),
-      toSqlDateTime(parsed.data.endsAt),
-      Math.round(parsed.data.price * 100),
-      parsed.data.capacity,
-      parsed.data.excerpt,
-      parsed.data.description,
-      parsed.data.status,
-      eventId,
-      organiser.id
-    ]
-  );
-
-  // When an event is cancelled, cancel all confirmed bookings so attendees
-  // are not left with a "Confirmed" status on a cancelled event.
-  if (parsed.data.status === "cancelled") {
-    await execute(
-      `UPDATE bookings SET status = 'cancelled' WHERE event_id = ? AND status = 'confirmed'`,
-      [eventId]
+  // Updating the event and cancelling bookings run together so neither can succeed without the other.
+  await withTransaction(async (conn) => {
+    await conn.execute(
+      `
+        UPDATE events
+        SET
+          title = ?,
+          category = ?,
+          venue = ?,
+          city = ?,
+          starts_at = ?,
+          ends_at = ?,
+          price_cents = ?,
+          capacity = ?,
+          excerpt = ?,
+          description = ?,
+          status = ?
+        WHERE id = ? AND organiser_id = ?
+      `,
+      [
+        parsed.data.title,
+        parsed.data.category,
+        parsed.data.venue,
+        parsed.data.city,
+        toSqlDateTime(parsed.data.startsAt),
+        toSqlDateTime(parsed.data.endsAt),
+        Math.round(parsed.data.price * 100),
+        parsed.data.capacity,
+        parsed.data.excerpt,
+        parsed.data.description,
+        parsed.data.status,
+        eventId,
+        organiser.id
+      ]
     );
+
+    if (parsed.data.status === "cancelled") {
+      await conn.execute(
+        `UPDATE bookings SET status = 'cancelled' WHERE event_id = ? AND status = 'confirmed'`,
+        [eventId]
+      );
+    }
+  });
+
+  if (parsed.data.status === "cancelled") {
     revalidatePath("/attendee");
   }
 
@@ -172,10 +176,17 @@ export async function deleteEventAction(formData: FormData) {
     redirect("/organiser");
   }
 
-  await execute("DELETE FROM events WHERE id = ? AND organiser_id = ?", [
-    parsed.data.eventId,
-    organiser.id
-  ]);
+  // Booking cancellation and event removal are atomic to keep data consistent.
+  await withTransaction(async (conn) => {
+    await conn.execute(
+      `UPDATE bookings SET status = 'cancelled' WHERE event_id = ? AND status = 'confirmed'`,
+      [parsed.data.eventId]
+    );
+    await conn.execute(
+      "DELETE FROM events WHERE id = ? AND organiser_id = ?",
+      [parsed.data.eventId, organiser.id]
+    );
+  });
 
   revalidatePath("/");
   revalidatePath("/organiser");

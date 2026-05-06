@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireRole } from "@/lib/auth";
-import { execute, query } from "@/lib/db";
+import { execute, query, withTransaction } from "@/lib/db";
 import { eventDeleteSchema, roleUpdateSchema, userDeleteSchema } from "@/lib/validation";
 
 export async function updateUserRoleAction(formData: FormData) {
@@ -89,11 +89,14 @@ export async function adminDeleteEventAction(formData: FormData) {
     redirect("/admin");
   }
 
-  await execute(
-    `UPDATE bookings SET status = 'cancelled' WHERE event_id = ? AND status = 'confirmed'`,
-    [parsed.data.eventId]
-  );
-  await execute("DELETE FROM events WHERE id = ?", [parsed.data.eventId]);
+  // Both operations run together so a mid-way failure cannot leave orphaned bookings.
+  await withTransaction(async (conn) => {
+    await conn.execute(
+      `UPDATE bookings SET status = 'cancelled' WHERE event_id = ? AND status = 'confirmed'`,
+      [parsed.data.eventId]
+    );
+    await conn.execute("DELETE FROM events WHERE id = ?", [parsed.data.eventId]);
+  });
 
   revalidatePath("/admin");
   revalidatePath("/");
