@@ -559,6 +559,7 @@ export async function getAttendeeStats(attendeeId: number) {
 }
 
 export async function getActiveETicketCard(attendeeId: number) {
+  // A card is active only when its status is active and its expiry date is still in the future.
   const rows = await query<Array<{ id: number }>>(
     `
       SELECT id
@@ -576,6 +577,7 @@ export async function getActiveETicketCard(attendeeId: number) {
 }
 
 export async function getAttendeeETicketCard(attendeeId: number): Promise<ETicketCard | null> {
+  // This returns the latest card, including expired cards, so the page can show the correct state.
   const rows = await query<ETicketCardRow[]>(
     `
       SELECT
@@ -609,6 +611,7 @@ export async function getAttendeeETicketCard(attendeeId: number): Promise<ETicke
 }
 
 export async function getETicketCardBookings(attendeeId: number, cardId: number) {
+  // The attendee id and card id are both checked to stop users seeing another person's tickets.
   const rows = await query<BookingRow[]>(
     `
       SELECT

@@ -53,6 +53,7 @@ function buildGenerator(degree: number) {
   return poly;
 }
 
+// Reed-Solomon error correction helps the QR code stay readable if small parts are damaged.
 function reedSolomon(data: number[], degree: number) {
   const generator = buildGenerator(degree);
   const message = [...data, ...new Array<number>(degree).fill(0)];
@@ -114,6 +115,7 @@ function createMatrix() {
   }
 
   function addFinder(row: number, col: number) {
+    // Finder patterns are the three large squares that scanners use to locate a QR code.
     for (let r = -1; r <= 7; r++) {
       for (let c = -1; c <= 7; c++) {
         const rr = row + r;
@@ -154,6 +156,7 @@ function createMatrix() {
 }
 
 function createQrMatrix(value: string) {
+  // The ticket code is converted into QR modules, then rendered as an SVG.
   const { matrix, reserved } = createMatrix();
   const bits = createCodewords(value).flatMap((codeword) =>
     Array.from({ length: 8 }, (_, i) => (codeword >> (7 - i)) & 1)

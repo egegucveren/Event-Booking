@@ -9,11 +9,13 @@ import { requireRole } from "@/lib/auth";
 import { query, withTransaction } from "@/lib/db";
 
 function createCardNumber() {
+  // Random card numbers make each yearly card unique.
   return `PP${randomBytes(7).toString("hex").toUpperCase()}`;
 }
 
 async function createCardForUser(userId: number) {
   return withTransaction(async (conn) => {
+    // A user should only have one active e-ticket card at a time.
     await conn.execute(
       `
         UPDATE e_ticket_cards
@@ -28,6 +30,7 @@ async function createCardForUser(userId: number) {
 
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
+        // The expiry date is exactly one year after the card is created.
         const [result]: any = await conn.execute(
           `
             INSERT INTO e_ticket_cards (user_id, card_number, status, issued_at, expires_at)
@@ -42,6 +45,7 @@ async function createCardForUser(userId: number) {
       }
     }
 
+    // Older confirmed bookings without a card are moved onto the new card.
     await conn.execute(
       `
         UPDATE bookings
@@ -58,6 +62,7 @@ async function createCardForUser(userId: number) {
 }
 
 async function hasActiveCard(userId: number) {
+  // This check stops users from renewing before the one-year period ends.
   const rows = await query<Array<{ id: number }>>(
     `
       SELECT id

@@ -54,6 +54,7 @@ export async function createBookingAction(_: typeof idleFormState, formData: For
     };
   }
 
+  // The booking is connected to the active card, so the ticket can appear on the e-ticket page.
   // Use a transaction with SELECT FOR UPDATE to serialize concurrent booking
   // attempts for the same event, preventing race conditions on seat capacity.
   const result = await withTransaction(async (conn) => {

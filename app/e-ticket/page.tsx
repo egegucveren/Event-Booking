@@ -25,8 +25,10 @@ const cardPurposes = [
 ];
 
 export default async function ETicketPage({ searchParams }: ETicketPageProps) {
+  // Only attendee users can open this page because tickets belong to attendees.
   const attendee = await requireRole("attendee");
   const card = await getAttendeeETicketCard(attendee.id);
+  // Tickets are shown only for the selected user's own e-ticket card.
   const tickets = card ? await getETicketCardBookings(attendee.id, card.id) : [];
   const notice = getNotice((await searchParams)?.notice);
 
@@ -65,6 +67,7 @@ export default async function ETicketPage({ searchParams }: ETicketPageProps) {
             ))}
           </ul>
 
+          {/* Active cards cannot be renewed until they expire. */}
           <form action={card && !card.isValid ? renewETicketCardAction : buyETicketCardAction}>
             <SubmitButton
               disabled={Boolean(card?.isValid)}

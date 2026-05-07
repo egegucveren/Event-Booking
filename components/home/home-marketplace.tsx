@@ -23,10 +23,12 @@ type HomeMarketplaceProps = {
 };
 
 export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
+  // These states keep the user's current search and filter choices.
   const [selectedCategory, setSelectedCategory] = useState("All experiences");
   const [selectedCity, setSelectedCity] = useState("All cities");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Filter options are created from real event data, so the dropdowns stay up to date.
   const categoryOptions = ["All experiences", ...new Set(events.map((event) => event.category))];
   const cityOptions = [
     "All cities",
@@ -37,6 +39,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
     )
   ];
 
+  // The event must match the text search, the selected category, and the selected city.
   const filteredEvents = events.filter((event) => {
     const searchText = `${event.title} ${event.city} ${event.category} ${event.excerpt}`.toLowerCase();
     const searchMatch = searchText.includes(searchQuery.toLowerCase());
@@ -49,6 +52,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
     (event) => selectedCategory === "All experiences" || event.category === selectedCategory
   );
 
+  // The first visible event is used to update the summary and spotlight areas.
   const activeEvent = filteredEvents[0] ?? events[0] ?? null;
   const featuredPrice = activeEvent ? formatCurrencyFromCents(activeEvent.priceCents) : "EUR 0.00";
   const activeCategoryCount = categoryFilteredEvents.length;
