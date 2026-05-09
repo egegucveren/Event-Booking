@@ -50,7 +50,19 @@ export const eventSchema = z
     status: z.enum(["scheduled", "cancelled"]).default("scheduled")
   })
   .superRefine((value, ctx) => {
-    if (new Date(value.endsAt) <= new Date(value.startsAt)) {
+    const now = new Date();
+    const startsAt = new Date(value.startsAt);
+    const endsAt = new Date(value.endsAt);
+
+    if (startsAt <= now) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["startsAt"],
+        message: "Start time must be in the future."
+      });
+    }
+
+    if (endsAt <= startsAt) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["endsAt"],
@@ -80,6 +92,16 @@ export const eventDeleteSchema = z.object({
 
 export const bookingCancelSchema = z.object({
   bookingId: requiredNumber("Booking").pipe(z.number().int().positive())
+});
+
+export const contactSchema = z.object({
+  name: z.string().trim().min(2, "Full name is required.").max(120, "Name is too long."),
+  email: z.string().trim().email("Enter a valid email address."),
+  message: z.string().trim().min(10, "Message must be at least 10 characters.").max(2000, "Message is too long.")
+});
+
+export const ticketResolveSchema = z.object({
+  ticketId: requiredNumber("Ticket").pipe(z.number().int().positive())
 });
 
 export function validationErrorState(error: ZodError): FormState {

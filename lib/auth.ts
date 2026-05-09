@@ -1,3 +1,4 @@
+// Authentication module: password hashing, session management, and role-based access control.
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHash, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
@@ -15,15 +16,18 @@ type UserRow = {
   name: string;
   email: string;
   role: Role;
+  is_owner: number;
   password_hash: string;
 };
 
+// Hashes a plain-text password using scrypt with a random salt stored as "salt:hash".
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
   return `${salt}:${derivedKey.toString("hex")}`;
 }
 
+// Compares a plain-text password to a stored hash using a timing-safe comparison.
 export async function verifyPassword(password: string, storedHash: string) {
   const [salt, savedKey] = storedHash.split(":");
   if (!salt || !savedKey) {
@@ -33,6 +37,7 @@ export async function verifyPassword(password: string, storedHash: string) {
   const derivedKey = (await scryptAsync(password, salt, 64)) as Buffer;
   const savedBuffer = Buffer.from(savedKey, "hex");
 
+  // timingSafeEqual throws if the two buffers differ in length, so this check must come first.
   if (savedBuffer.length !== derivedKey.length) {
     return false;
   }
@@ -40,10 +45,12 @@ export async function verifyPassword(password: string, storedHash: string) {
   return timingSafeEqual(savedBuffer, derivedKey);
 }
 
+// Hashes a session token with SHA-256 before storing it so a leaked DB row cannot be used to hijack a session.
 export function hashSessionToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
+// Creates a new session: stores a hashed token in the DB and sets a secure HTTP-only cookie.
 export async function createSession(user: SessionUser) {
   const token = randomBytes(32).toString("hex");
   const tokenHash = hashSessionToken(token);
@@ -65,6 +72,7 @@ export async function createSession(user: SessionUser) {
   });
 }
 
+// Deletes the session from the DB and clears the client cookie.
 export async function destroySession() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
@@ -76,6 +84,7 @@ export async function destroySession() {
   cookieStore.delete(SESSION_COOKIE);
 }
 
+// Reads the session cookie and returns the matching user if the session is valid and not expired.
 export async function getSessionUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
@@ -90,10 +99,11 @@ export async function getSessionUser() {
       name: string;
       email: string;
       role: Role;
+      is_owner: number;
     }>
   >(
     `
-      SELECT u.id, u.name, u.email, u.role
+      SELECT u.id, u.name, u.email, u.role, u.is_owner
       FROM sessions s
       INNER JOIN users u ON u.id = s.user_id
       WHERE s.token_hash = ?
@@ -103,9 +113,12 @@ export async function getSessionUser() {
     [hashSessionToken(token)]
   );
 
-  return rows[0] ?? null;
+  const row = rows[0];
+  if (!row) return null;
+  return { id: row.id, name: row.name, email: row.email, role: row.role, isOwner: row.is_owner === 1 };
 }
 
+// Redirects unauthenticated users to the login page.
 export async function requireUser() {
   const user = await getSessionUser();
   if (!user) {
@@ -114,6 +127,7 @@ export async function requireUser() {
   return user;
 }
 
+// Redirects users who do not hold one of the allowed roles to their own dashboard.
 export async function requireRole(roles: Role | Role[]) {
   const user = await requireUser();
   const allowedRoles = Array.isArray(roles) ? roles : [roles];
@@ -125,6 +139,7 @@ export async function requireRole(roles: Role | Role[]) {
   return user;
 }
 
+// Returns the default dashboard route for each user role.
 export function getRoleHome(role: Role) {
   switch (role) {
     case "admin":
@@ -138,18 +153,19 @@ export function getRoleHome(role: Role) {
 
 export async function getUserByEmail(email: string) {
   const rows = await query<UserRow[]>(
-    "SELECT id, name, email, role, password_hash FROM users WHERE email = ? LIMIT 1",
+    "SELECT id, name, email, role, is_owner, password_hash FROM users WHERE email = ? LIMIT 1",
     [email]
   );
 
   return rows[0] ?? null;
 }
 
-export function toSessionUser(user: Pick<UserRow, "id" | "name" | "email" | "role">): SessionUser {
+export function toSessionUser(user: Pick<UserRow, "id" | "name" | "email" | "role" | "is_owner">): SessionUser {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role
+    role: user.role,
+    isOwner: user.is_owner === 1
   };
 }

@@ -9,6 +9,7 @@ export type SessionUser = {
   name: string;
   email: string;
   role: Role;
+  isOwner: boolean;
 };
 
 export type EventCardData = {
@@ -68,6 +69,15 @@ export type BookingRecord = {
   status: BookingStatus;
 };
 
+export type ETicketCard = {
+  id: number;
+  cardNumber: string;
+  status: "active" | "expired";
+  issuedAt: string;
+  expiresAt: string;
+  isValid: boolean;
+};
+
 export type DashboardStats = {
   totalEvents: number;
   totalBookings: number;
@@ -78,4 +88,13 @@ export type FormState = {
   status: "idle" | "error" | "success";
   message?: string;
   fieldErrors?: Record<string, string[] | undefined>;
+};
+
+export type ContactTicket = {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  status: "open" | "resolved";
+  createdAt: string;
 };

@@ -16,9 +16,7 @@ export default async function LoginPage() {
       <div className="glass-panel stack-lg">
         <p className="eyebrow">Welcome back</p>
         <h1>Log in to keep your events, bookings, and admin tools in sync.</h1>
-        <p>
-          This flow uses cookie-based sessions with server-side validation, so access stays tied to the correct role.
-        </p>
+        <p>Enter your email and password to continue. Your session is kept secure and tied to your account.</p>
         <LoginForm />
       </div>
 
@@ -34,6 +32,18 @@ export default async function LoginPage() {
             </li>
             <li>
               <strong>Attendee:</strong> attendee@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> ava@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> noah@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> sofia@pulsepass.local / Passo123!
+            </li>
+            <li>
+              <strong>Attendee:</strong> ethan@pulsepass.local / Passo123!
             </li>
           </ul>
         </div>

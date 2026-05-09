@@ -30,7 +30,7 @@ export default async function OrganiserPage({ searchParams }: OrganiserPageProps
           <p className="eyebrow">Organiser command centre</p>
           <h1>Shape the event pipeline, track bookings, and keep every listing polished.</h1>
           <p>
-            You are signed in as {organiser.name}. The organiser area demonstrates create, read, update, and delete flows on top of protected server actions.
+            Welcome back, {organiser.name}. Manage your events, track bookings, and grow your audience — all from one place.
           </p>
         </div>
         <Link className={buttonClassName("primary")} href="/organiser/events/new">

@@ -1,5 +1,7 @@
 "use server";
 
+// Server actions for authentication: register, login, and logout.
+// All input is validated with Zod before any database operation.
 import { redirect } from "next/navigation";
 
 import { createSession, destroySession, getRoleHome, getUserByEmail, hashPassword, toSessionUser, verifyPassword } from "@/lib/auth";
@@ -30,19 +32,40 @@ export async function registerAction(_: typeof idleFormState, formData: FormData
   }
 
   const passwordHash = await hashPassword(parsed.data.password);
-  const result = await execute(
-    "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)",
-    [parsed.data.name, parsed.data.email, passwordHash, parsed.data.role]
-  );
+
+  let insertId: number;
+  try {
+    const result = await execute(
+      "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)",
+      [parsed.data.name, parsed.data.email, passwordHash, parsed.data.role]
+    );
+    insertId = Number(result.insertId);
+  } catch (err: any) {
+    if (err.code === "ER_DUP_ENTRY") {
+      return {
+        status: "error" as const,
+        message: "An account with that email already exists.",
+        fieldErrors: { email: ["Use a different email address."] }
+      };
+    }
+    throw err;
+  }
 
   const user = {
-    id: Number(result.insertId),
+    id: insertId,
     name: parsed.data.name,
     email: parsed.data.email,
-    role: parsed.data.role
+    role: parsed.data.role,
+    isOwner: false
   };
 
-  await createSession(user);
+  // If session creation fails the user can still log in — don't leave them stuck
+  try {
+    await createSession(user);
+  } catch {
+    redirect("/login");
+  }
+
   redirect(getRoleHome(parsed.data.role));
 }
 

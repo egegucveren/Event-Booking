@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { SectionHeading } from "@/components/layout/section-heading";
 import { buttonClassName } from "@/components/ui/button";
+import { CustomSelect } from "@/components/ui/custom-select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EventCard } from "@/components/ui/event-card";
 import { formatCurrencyFromCents } from "@/lib/format";
@@ -22,9 +23,12 @@ type HomeMarketplaceProps = {
 };
 
 export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
+  // These states keep the user's current search and filter choices.
   const [selectedCategory, setSelectedCategory] = useState("All experiences");
   const [selectedCity, setSelectedCity] = useState("All cities");
+  const [searchQuery, setSearchQuery] = useState("");
 
+  // Filter options are created from real event data, so the dropdowns stay up to date.
   const categoryOptions = ["All experiences", ...new Set(events.map((event) => event.category))];
   const cityOptions = [
     "All cities",
@@ -35,15 +39,23 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
     )
   ];
 
+  // The event must match the text search, the selected category, and the selected city.
   const filteredEvents = events.filter((event) => {
+    const searchText = `${event.title} ${event.city} ${event.category} ${event.excerpt}`.toLowerCase();
+    const searchMatch = searchText.includes(searchQuery.toLowerCase());
     const categoryMatch = selectedCategory === "All experiences" || event.category === selectedCategory;
     const cityMatch = selectedCity === "All cities" || event.city === selectedCity;
-    return categoryMatch && cityMatch;
-  });
 
+    return searchMatch && categoryMatch && cityMatch;
+  });
+  const categoryFilteredEvents = events.filter(
+    (event) => selectedCategory === "All experiences" || event.category === selectedCategory
+  );
+
+  // The first visible event is used to update the summary and spotlight areas.
   const activeEvent = filteredEvents[0] ?? events[0] ?? null;
   const featuredPrice = activeEvent ? formatCurrencyFromCents(activeEvent.priceCents) : "EUR 0.00";
-  const activeCategoryCount = events.filter((event) => selectedCategory === "All experiences" || event.category === selectedCategory).length;
+  const activeCategoryCount = categoryFilteredEvents.length;
 
   return (
     <div className="market-page">
@@ -61,8 +73,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             <p className="market-hero__eyebrow">Curated Event Tickets</p>
             <h1>Discover standout experiences in a browse-first ticket storefront.</h1>
             <p className="market-hero__body">
-              The catalogue now uses real event artwork and live filtering, so it feels closer to a ticket marketplace and
-              helps users narrow listings instead of reading static promo copy.
+              Browse handpicked events, filter by category or city, and secure your seats in seconds.
             </p>
             <div className="row gap-sm wrap">
               <Link className={buttonClassName("primary")} href="#events">
@@ -80,7 +91,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             <span>
               {activeEvent
                 ? `Currently highlighting ${activeEvent.title} in ${activeEvent.city}.`
-                : "Clean entry flow, lighter category styling, and clearer discovery hierarchy."}
+                : "Explore upcoming events and find your next experience."}
             </span>
             <div className="market-summary-card__stats">
               <div>
@@ -104,8 +115,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
                 : "Live sessions, workshops, and wellness experiences in one curated stream."}
             </h2>
             <p>
-              The layout now borrows the category-page rhythm from Passo but behaves like a real catalogue: every filter,
-              count, and spotlight block responds to the visible event set.
+              Filter by category, browse by city, and book with confidence - every listing is updated in real time.
             </p>
           </div>
           <div className="market-promo-strip__meta">
@@ -121,93 +131,7 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
         </div>
       </section>
 
-      <section className="market-toolbar">
-        <div className="market-toolbar__group">
-          <span className="market-toolbar__label">Popular filters</span>
-          <div className="market-toolbar__chips">
-            {categoryOptions.map((category) => (
-              <button
-                aria-pressed={selectedCategory === category}
-                className={`filter-chip${selectedCategory === category ? " filter-chip--active" : ""}`}
-                key={category}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setSelectedCity("All cities");
-                }}
-                type="button"
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="market-toolbar__result">
-          <strong>{filteredEvents.length}</strong>
-          <span>{filteredEvents.length === 1 ? "featured listing" : "featured listings"}</span>
-        </div>
-      </section>
-
       <section className="market-layout">
-        <aside className="market-sidebar">
-          <div className="market-sidebar__panel">
-            <p className="market-sidebar__eyebrow">Categories</p>
-            <ul className="market-sidebar__list">
-              {categoryOptions.map((category) => {
-                const count =
-                  category === "All experiences" ? events.length : events.filter((event) => event.category === category).length;
-
-                return (
-                  <li key={category}>
-                    <button
-                      aria-pressed={selectedCategory === category}
-                      className={`market-sidebar__button${selectedCategory === category ? " market-sidebar__button--active" : ""}`}
-                      onClick={() => {
-                        setSelectedCategory(category);
-                        setSelectedCity("All cities");
-                      }}
-                      type="button"
-                    >
-                      <span>{category}</span>
-                      <strong>{count}</strong>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div className="market-sidebar__panel">
-            <p className="market-sidebar__eyebrow">Browse by city</p>
-            <ul className="market-sidebar__list">
-              {cityOptions.map((city) => {
-                const count =
-                  city === "All cities"
-                    ? filteredEvents.length
-                    : events.filter(
-                        (event) =>
-                          event.city === city &&
-                          (selectedCategory === "All experiences" || event.category === selectedCategory)
-                      ).length;
-
-                return (
-                  <li key={city}>
-                    <button
-                      aria-pressed={selectedCity === city}
-                      className={`market-sidebar__button${selectedCity === city ? " market-sidebar__button--active" : ""}`}
-                      onClick={() => setSelectedCity(city)}
-                      type="button"
-                    >
-                      <span>{city}</span>
-                      <strong>{count}</strong>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-        </aside>
-
         <div className="market-content">
           <div className="market-spotlight">
             <div>
@@ -215,8 +139,8 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
               <h3>{activeEvent ? activeEvent.title : "Make the listing area the main event."}</h3>
               <p>
                 {activeEvent
-                  ? `${activeEvent.excerpt} The spotlight now follows the selected category and city context instead of staying static.`
-                  : "The spotlight strip mirrors the reference site's merchandising style with a category-first lead card."}
+                  ? activeEvent.excerpt
+                  : "Select a category or city to highlight a featured event here."}
               </p>
             </div>
             <Link className={buttonClassName("secondary")} href={user.organiserHref}>
@@ -224,7 +148,19 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
             </Link>
           </div>
 
-          <div className="market-listing-header" id="events">
+          <div className="market-inline-filters" id="events">
+            <input
+              className="input"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search by title, city, or category..."
+              type="text"
+              value={searchQuery}
+            />
+            <CustomSelect options={cityOptions} value={selectedCity} onChange={setSelectedCity} />
+            <CustomSelect options={categoryOptions} value={selectedCategory} onChange={setSelectedCategory} />
+          </div>
+
+          <div className="market-listing-header">
             <SectionHeading
               eyebrow="Available listings"
               title="Browse upcoming featured event tickets"
@@ -248,7 +184,6 @@ export function HomeMarketplace({ events, stats, user }: HomeMarketplaceProps) {
           )}
         </div>
       </section>
-
     </div>
   );
 }
