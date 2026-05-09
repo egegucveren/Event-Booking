@@ -118,10 +118,10 @@ scripts/
 | User registration and login | `actions/auth.ts`, register and login pages |
 | Role-based access control | `requireRole()` in `lib/auth.ts`, guarded on every dashboard route |
 | CRUD — Events | Organiser create / edit / delete; admin delete any event |
-| CRUD — Bookings | Attendee create and cancel with race-condition protection (`SELECT FOR UPDATE`) |
-| CRUD — Users | Admin update role, delete account |
-| CRUD — Contact tickets | Contact form saves to DB; admin marks as resolved |
+| Booking management | Attendee create and cancel with race-condition protection (`SELECT FOR UPDATE`) |
+| User administration | Admin update role and delete account |
+| Contact ticket workflow | Contact form saves to DB; admin marks tickets as resolved |
 | Server-side validation | Zod schemas for every form; field errors returned to client |
-| Session management | HTTP-only cookie, SHA-256 token hash, 30-day expiry |
+| Session management | HTTP-only cookie, SHA-256 token hash, 7-day expiry |
 | Modular code structure | Separated actions, components, lib helpers, and page routes |
 | Responsive design | CSS grid and flex layouts collapse on small screens |
