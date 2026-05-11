@@ -1,3 +1,4 @@
+// Notice lookup table: converts redirect-friendly slugs into UI banner messages.
 const noticeMap: Record<string, { tone: "success" | "warning"; text: string }> = {
   "signed-out": { tone: "success", text: "You have been signed out." },
   "event-created": { tone: "success", text: "Event published successfully." },

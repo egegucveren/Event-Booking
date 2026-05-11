@@ -1,3 +1,4 @@
+// Registration page: guides new users into attendee or organiser onboarding.
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

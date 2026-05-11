@@ -1,3 +1,4 @@
+// Empty state: keeps fallback screens consistent with optional call-to-action support.
 import Link from "next/link";
 
 import { buttonClassName } from "@/components/ui/button";

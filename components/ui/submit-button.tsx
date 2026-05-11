@@ -1,5 +1,6 @@
 "use client";
 
+// Submit button: reads form pending state and swaps labels while a submission is in flight.
 import { useFormStatus } from "react-dom";
 
 import { buttonClassName } from "@/components/ui/button";

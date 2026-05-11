@@ -1,3 +1,4 @@
+// Notice banner: shows short success or warning feedback after redirects and actions.
 import { classNames } from "@/lib/format";
 
 type NoticeBannerProps = {

@@ -1,3 +1,4 @@
+// Admin dashboard: reviews users, events, platform metrics, and open contact tickets.
 import { adminDeleteEventAction, deleteUserAction } from "@/actions/admin";
 import { resolveTicketAction } from "@/actions/contact";
 import { RoleSelectForm } from "@/components/ui/role-select-form";

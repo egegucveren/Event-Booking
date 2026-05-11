@@ -1,5 +1,6 @@
 "use client";
 
+// Custom select: provides a styled dropdown for small option lists in client-side filters.
 import { useRef, useState } from "react";
 
 type CustomSelectProps = {

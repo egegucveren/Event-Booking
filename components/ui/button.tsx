@@ -1,3 +1,4 @@
+// Button utility: maps semantic variants and sizes to shared CSS class names.
 import { classNames } from "@/lib/format";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";

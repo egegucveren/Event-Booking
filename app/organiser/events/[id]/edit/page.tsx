@@ -1,3 +1,4 @@
+// Organiser edit page: loads one owned event and reuses the shared editor form.
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

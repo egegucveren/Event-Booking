@@ -1,3 +1,4 @@
+// Event detail page: presents one event, its availability, and attendee-only booking controls.
 import Link from "next/link";
 import { notFound } from "next/navigation";
 

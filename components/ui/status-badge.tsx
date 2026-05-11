@@ -1,3 +1,4 @@
+// Status badge: renders compact labels for roles, statuses, and highlighted states.
 import { classNames } from "@/lib/format";
 
 type StatusBadgeProps = {

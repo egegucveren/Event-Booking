@@ -1,5 +1,6 @@
 "use client";
 
+// Booking form: submits attendee seat reservations and warns when the seat cap is exceeded.
 import Link from "next/link";
 import { useState } from "react";
 import { useActionState } from "react";

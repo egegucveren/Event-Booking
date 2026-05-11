@@ -1,3 +1,4 @@
+// Home page: loads featured events, landing stats, and optional notice messaging.
 import { HomeMarketplace } from "@/components/home/home-marketplace";
 import { NoticeBanner } from "@/components/ui/notice-banner";
 import { getSessionUser } from "@/lib/auth";

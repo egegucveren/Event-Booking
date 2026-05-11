@@ -1,3 +1,4 @@
+// FAQ page: answers common booking, account, and organiser workflow questions.
 import Link from "next/link";
 
 import { buttonClassName } from "@/components/ui/button";

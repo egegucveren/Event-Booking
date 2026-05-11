@@ -1,5 +1,6 @@
 "use client";
 
+// Shared event editor: powers both organiser create and edit flows with one validated form.
 import { useActionState } from "react";
 
 import { Field } from "@/components/ui/field";

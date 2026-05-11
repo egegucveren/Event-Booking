@@ -1,3 +1,4 @@
+// Organiser creation page: protects event publishing and renders the shared event editor.
 import Link from "next/link";
 
 import { createEventAction } from "@/actions/events";

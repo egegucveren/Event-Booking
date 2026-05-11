@@ -1,3 +1,4 @@
+// Organiser dashboard: lists owned events, booking stats, and management actions.
 import Link from "next/link";
 
 import { deleteEventAction } from "@/actions/events";

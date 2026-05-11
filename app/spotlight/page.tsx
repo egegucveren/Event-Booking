@@ -1,3 +1,4 @@
+// Spotlight page: highlights the most relevant upcoming event and supporting recommendations.
 import type { CSSProperties } from "react";
 import Link from "next/link";
 
@@ -8,6 +9,7 @@ import { formatCurrencyFromCents, formatDateRange, parseSqlDateTime } from "@/li
 import { getFeaturedEvents, getSpotlightEvent } from "@/lib/queries";
 
 function formatNumericDateRange(start: string | Date, end: string | Date) {
+  // This compact numeric format keeps the supporting cards short and easy to scan.
   const startDate = parseSqlDateTime(start);
   const endDate = parseSqlDateTime(end);
   const dateLabel = [
@@ -22,6 +24,7 @@ function formatNumericDateRange(start: string | Date, end: string | Date) {
 }
 
 export default async function SpotlightPage() {
+  // The page needs both the main spotlight event and a few nearby alternatives.
   const [spotlightEvent, recommendations] = await Promise.all([getSpotlightEvent(), getFeaturedEvents(4)]);
   const supportingEvents = recommendations.filter((event) => event.id !== spotlightEvent?.id).slice(0, 3);
 
@@ -43,6 +46,7 @@ export default async function SpotlightPage() {
     "--spotlight-image-position": spotlightEvent.imagePosition.detail,
     "--spotlight-image-size": spotlightEvent.imageSize.detail
   } as CSSProperties;
+  // Clamp progress so the bar always stays within the visual track.
   const bookedPercent = Math.min(Math.round((spotlightEvent.bookedSeats / spotlightEvent.capacity) * 100), 100);
 
   return (

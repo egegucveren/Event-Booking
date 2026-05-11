@@ -1,3 +1,4 @@
+// App icon generator: renders a simple PulsePass mark for the browser tab and metadata.
 import { ImageResponse } from "next/og";
 
 export const size = {

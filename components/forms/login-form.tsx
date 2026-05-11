@@ -1,5 +1,6 @@
 "use client";
 
+// Login form: posts credentials through the auth server action and surfaces field errors.
 import { useActionState } from "react";
 
 import { loginAction } from "@/actions/auth";

@@ -1,3 +1,4 @@
+// Shared application types: describe users, events, bookings, tickets, and form state.
 export type Role = "admin" | "organiser" | "attendee";
 
 export type EventStatus = "scheduled" | "cancelled";

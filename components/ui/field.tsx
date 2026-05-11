@@ -1,3 +1,4 @@
+// Field wrapper: keeps labels, hints, and validation messages aligned for form inputs.
 import type { ReactNode } from "react";
 
 type FieldProps = {

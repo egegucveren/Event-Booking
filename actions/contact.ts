@@ -1,5 +1,6 @@
 "use server";
 
+// Server actions for contact tickets: create visitor messages and resolve them from admin.
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

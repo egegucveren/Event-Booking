@@ -1,5 +1,6 @@
 "use client";
 
+// Contact form: sends visitor messages and shows inline validation or success feedback.
 import { useActionState } from "react";
 
 import { submitContactAction } from "@/actions/contact";

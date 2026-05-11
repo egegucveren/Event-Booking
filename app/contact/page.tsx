@@ -1,3 +1,4 @@
+// Contact page: shares support details and lets visitors send a message to the team.
 import type { Metadata } from "next";
 
 import { ContactForm } from "@/components/forms/contact-form";

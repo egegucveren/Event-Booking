@@ -1,5 +1,6 @@
 "use client";
 
+// Registration form: creates attendee or organiser accounts with inline validation feedback.
 import { useActionState } from "react";
 
 import { registerAction } from "@/actions/auth";

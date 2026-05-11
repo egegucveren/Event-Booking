@@ -1,3 +1,4 @@
+// Root layout: loads global fonts, shared chrome, and the cookie consent banner.
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 

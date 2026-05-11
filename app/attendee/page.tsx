@@ -1,3 +1,4 @@
+// Attendee dashboard: shows bookings, e-ticket status, personal stats, and suggested events.
 import { cancelBookingAction } from "@/actions/bookings";
 import Link from "next/link";
 import { EventCard } from "@/components/ui/event-card";

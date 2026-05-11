@@ -1,3 +1,4 @@
+// Validation layer: defines shared Zod schemas and helpers for server actions and forms.
 import { ZodError, z } from "zod";
 
 import type { FormState } from "@/lib/types";

@@ -1,3 +1,4 @@
+// Site header: renders primary navigation plus session-aware shortcuts and auth controls.
 import Link from "next/link";
 
 import { logoutAction } from "@/actions/auth";

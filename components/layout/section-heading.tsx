@@ -1,3 +1,4 @@
+// Reusable section heading: standardises eyebrow, title, and body copy across pages.
 type SectionHeadingProps = {
   eyebrow: string;
   title: string;

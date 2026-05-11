@@ -1,3 +1,4 @@
+// Login page: redirects existing sessions and renders the sign-in form for guests.
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
