@@ -15,7 +15,7 @@ import { getActiveETicketCard, getEventById } from "@/lib/queries";
 import { bookingCancelSchema, bookingSchema, idleFormState, validationErrorState } from "@/lib/validation";
 
 function createBookingCode() {
-  // Use all 8 hex chars (16^8 is about 4B combinations), no slice.
+  // This creates a unique ticket code for each booking.
   return `PP-${randomBytes(4).toString("hex").toUpperCase()}`;
 }
 
@@ -96,7 +96,8 @@ export async function createBookingAction(_: typeof idleFormState, formData: For
       };
     }
 
-    // Retry up to 5 times on the unlikely event of a booking code collision
+    // The booking code is saved in the database and later used for the QR code.
+    // Retry up to 5 times if the same random code already exists.
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
         await conn.execute(

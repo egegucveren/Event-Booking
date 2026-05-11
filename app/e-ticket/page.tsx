@@ -147,6 +147,7 @@ export default async function ETicketPage({ searchParams }: ETicketPageProps) {
                       <span>{formatCurrencyFromCents(ticket.totalCents)}</span>
                     </div>
                   </div>
+                  {/* The ticket code is sent to the QR component as the QR value. */}
                   <TicketQr label={`QR code for ticket ${ticket.code}`} value={ticket.code} />
                 </article>
               ))}

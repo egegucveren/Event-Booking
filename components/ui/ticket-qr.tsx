@@ -77,6 +77,7 @@ function pushBits(bits: number[], value: number, length: number) {
 }
 
 function createCodewords(value: string) {
+  // The ticket code text is changed into bytes for the QR data.
   const bytes = Array.from(Buffer.from(value, "ascii"));
   if (bytes.length > 17) {
     throw new Error("Ticket QR value is too long for the compact QR format.");
@@ -105,6 +106,7 @@ function createCodewords(value: string) {
 }
 
 function createMatrix() {
+  // This is the 21 by 21 grid where the QR squares are placed.
   const matrix: Cell[][] = Array.from({ length: QR_SIZE }, () => Array<Cell>(QR_SIZE).fill(null));
   const reserved = Array.from({ length: QR_SIZE }, () => Array<boolean>(QR_SIZE).fill(false));
 
@@ -156,7 +158,7 @@ function createMatrix() {
 }
 
 function createQrMatrix(value: string) {
-  // The ticket code is converted into QR modules, then rendered as an SVG.
+  // The ticket code is converted into black and white QR squares.
   const { matrix, reserved } = createMatrix();
   const bits = createCodewords(value).flatMap((codeword) =>
     Array.from({ length: 8 }, (_, i) => (codeword >> (7 - i)) & 1)
@@ -187,9 +189,11 @@ function createQrMatrix(value: string) {
 }
 
 export function TicketQr({ value, label }: TicketQrProps) {
+  // The same ticket code always creates the same QR image.
   const matrix = createQrMatrix(value);
   const cells = matrix.flatMap((row, rowIndex) =>
     row.map((cell, colIndex) =>
+      // Each true cell is drawn as one black SVG square.
       cell ? <rect height="1" key={`${rowIndex}-${colIndex}`} width="1" x={colIndex} y={rowIndex} /> : null
     )
   );
