@@ -25,7 +25,7 @@ function formatNumericDateRange(start: string | Date, end: string | Date) {
 
 export default async function SpotlightPage() {
   // The page needs both the main spotlight event and a few nearby alternatives.
-  const [spotlightEvent, recommendations] = await Promise.all([getSpotlightEvent(), getFeaturedEvents(4)]);
+  const [spotlightEvent, recommendations] = await Promise.all([getSpotlightEvent(), getFeaturedEvents({ limit: 4 })]);
   const supportingEvents = recommendations.filter((event) => event.id !== spotlightEvent?.id).slice(0, 3);
 
   if (!spotlightEvent) {

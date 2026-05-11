@@ -23,7 +23,7 @@ export default async function AttendeePage({ searchParams }: AttendeePageProps) 
     getAttendeeBookings(attendee.id),
     getAttendeeETicketCard(attendee.id),
     getAttendeeStats(attendee.id),
-    getFeaturedEvents(3)
+    getFeaturedEvents({ limit: 3 })
   ]);
   const notice = getNotice((await searchParams)?.notice);
 

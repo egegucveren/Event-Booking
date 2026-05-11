@@ -109,9 +109,7 @@ type AdminEventRow = RowDataPacket & {
   bookedSeats: number | null;
 };
 
-type FallbackEventRow = EventFields;
-
-const fallbackEventRows: FallbackEventRow[] = [
+const fallbackEventRows: EventFields[] = [
   {
     id: 1,
     title: "Neon Rooftop Session",
@@ -273,7 +271,31 @@ export async function getLandingStats() {
   }
 }
 
-export async function getFeaturedEvents(limit = 6) {
+type FeaturedEventsOptions = {
+  limit?: number;
+  category?: string;
+  city?: string;
+  search?: string;
+};
+
+export async function getFeaturedEvents({ limit = 6, category, city, search }: FeaturedEventsOptions = {}) {
+  const conditions = ["e.starts_at >= NOW()", "e.status = 'scheduled'"];
+  const values: (string | number)[] = [];
+
+  if (category) {
+    conditions.push("e.category = ?");
+    values.push(category);
+  }
+  if (city) {
+    conditions.push("e.city = ?");
+    values.push(city);
+  }
+  if (search) {
+    conditions.push("(e.title LIKE ? OR e.excerpt LIKE ?)");
+    values.push(`%${search}%`, `%${search}%`);
+  }
+  values.push(limit);
+
   try {
     const rows = await query<EventRow[]>(
       `
@@ -295,13 +317,12 @@ export async function getFeaturedEvents(limit = 6) {
         FROM events e
         INNER JOIN users u ON u.id = e.organiser_id
         LEFT JOIN bookings b ON b.event_id = e.id
-        WHERE e.starts_at >= NOW()
-          AND e.status = 'scheduled'
+        WHERE ${conditions.join(" AND ")}
         GROUP BY e.id
         ORDER BY e.starts_at ASC
         LIMIT ?
       `,
-      [limit]
+      values
     );
 
     return rows.map(mapEvent);

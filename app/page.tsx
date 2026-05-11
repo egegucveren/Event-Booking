@@ -12,7 +12,7 @@ type HomePageProps = {
 };
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const [events, stats, sessionUser] = await Promise.all([getFeaturedEvents(6), getLandingStats(), getSessionUser()]);
+  const [events, stats, sessionUser] = await Promise.all([getFeaturedEvents({ limit: 6 }), getLandingStats(), getSessionUser()]);
   const noticeSlug = (await searchParams)?.notice;
   const notice = getNotice(noticeSlug);
   const user = sessionUser
